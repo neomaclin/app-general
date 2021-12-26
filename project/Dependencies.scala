@@ -2,38 +2,42 @@ import sbt._
 
 object Dependencies {
   object versions {
-    val scala2Version = "2.13.6"
-    val scala3Version = "3.1.0"
-    val catsVersion = "2.7.0"
-    val distageVersion = "1.0.8"
-    //val tapirVersion = "0.19.1"
-    val circeVersion = "0.14.1"
+    val scala2 = "2.13.7"
+    val scala3 = "3.1.0"
+    val cats = "2.7.0"
+    val distage = "1.0.8"
+    val tapir = "0.19.3"
+    val circe = "0.14.1"
   }
 
+  val tapir = Seq(
+    "com.softwaremill.sttp.tapir" %% "tapir-core" % versions.tapir,
+    "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % versions.tapir
+  )
+
   val cats = Seq(
-    "org.typelevel" %% "cats-core" % versions.catsVersion,
-    "org.typelevel" %% "cats-kernel" % versions.catsVersion
+    "org.typelevel" %% "cats-core" % versions.cats,
+    "org.typelevel" %% "cats-kernel" % versions.cats
   )
 
   val defaultScalacOptions = Seq(
     "-feature",
     "-deprecation",
-    "-xfatal-warning",
     "-unchecked",
     "-language:postfixOps",
-    "-language:higherKinds",
+    "-language:higherKinds"
   )
 
   val distage = Seq(
-    "io.7mind.izumi" %% "distage-core" % versions.distageVersion,
-    "io.7mind.izumi" %% "distage-testkit-core" % versions.distageVersion % Test,
-    "io.7mind.izumi" %% "distage-testkit-scalatest" % versions.distageVersion % Test,
+    "io.7mind.izumi" %% "distage-core" % versions.distage,
+    "io.7mind.izumi" %% "distage-testkit-core" % versions.distage % Test,
+    "io.7mind.izumi" %% "distage-testkit-scalatest" % versions.distage % Test
   )
 
   val circe = Seq(
-    "io.circe" %% "circe-core",
-    "io.circe" %% "circe-generic",
-    "io.circe" %% "circe-generic-extras",
-    "io.circe" %% "circe-parser"
-  ).map(_ % versions.circeVersion)
+    "io.circe" %% "circe-core" % versions.circe,
+    "io.circe" %% "circe-generic" % versions.circe,
+    "io.circe" %% "circe-generic-extras" % versions.circe,
+    "io.circe" %% "circe-parser" % versions.circe
+  )
 }
