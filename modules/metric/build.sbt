@@ -1,10 +1,8 @@
 import Dependencies._
 
-name := "project-metric"
+name := "metric"
 
 scalacOptions ++= defaultScalacOptions
-
-
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value

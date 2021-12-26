@@ -1,10 +1,10 @@
 import Dependencies._
 
-name := "project-persistence"
+name := "persistence"
+
+libraryDependencies ++= mongo
 
 scalacOptions ++= defaultScalacOptions
-
-
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value

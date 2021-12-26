@@ -1,10 +1,8 @@
 import Dependencies._
 
-name := "project-infra"
+name := "infra"
 
 scalacOptions ++= defaultScalacOptions
-
-
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value

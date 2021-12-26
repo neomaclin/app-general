@@ -8,6 +8,7 @@ object Dependencies {
     val distage = "1.0.8"
     val tapir = "0.19.3"
     val circe = "0.14.1"
+    val reactiveMongo = "1.0.10"
   }
 
   val tapir = Seq(
@@ -39,5 +40,9 @@ object Dependencies {
     "io.circe" %% "circe-generic" % versions.circe,
     "io.circe" %% "circe-generic-extras" % versions.circe,
     "io.circe" %% "circe-parser" % versions.circe
+  )
+
+  val mongo = Seq(
+    "org.reactivemongo" %% "reactivemongo" % versions.reactiveMongo
   )
 }

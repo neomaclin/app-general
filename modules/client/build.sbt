@@ -1,10 +1,8 @@
 import Dependencies._
 
-name := "project-client"
+name := "client"
 
 scalacOptions ++= defaultScalacOptions
-
-
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value

@@ -1,6 +1,6 @@
 import Dependencies._
 
-name := "project-api"
+name := "api"
 
 libraryDependencies ++= tapir ++ circe
 

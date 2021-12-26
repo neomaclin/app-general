@@ -1,12 +1,10 @@
 import Dependencies._
 
-name := "project-domain"
+name := "domain"
 
 libraryDependencies ++= cats
 
 scalacOptions ++= defaultScalacOptions
-
-
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value
