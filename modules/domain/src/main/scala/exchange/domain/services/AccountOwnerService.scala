@@ -1,5 +1,5 @@
 package exchange.domain.services
 
-trait AccountOwnerService {
-  def verifyAccountOwnerPassword(username: String, password: String): Boolean
+trait AccountOwnerService[F[_]] {
+  def verifyAccountOwnerPassword(username: String, password: String): F[Boolean]
 }
