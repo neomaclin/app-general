@@ -3,7 +3,7 @@ package exchange.domain.entities
 import exchange.domain.vo.OrderStatusEnum.OrderStatus
 import exchange.domain.vo.OrderTypeEnum.OrderType
 
-case class Order(
+final case class Order(
     accountId: String,
     orderId: String,
     symbol: String,

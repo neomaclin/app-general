@@ -1,6 +1,6 @@
 package exchange.api.requests
 
-case class CreateOrderRequest(
+final case class CreateOrderRequest(
     account: String,
     symbol: String,
     orderType: String,
