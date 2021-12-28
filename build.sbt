@@ -1,11 +1,3 @@
-import Dependencies.versions
-
-ThisBuild / version := "0.1.0-SNAPSHOT"
-ThisBuild / organization := "com.github.scalacn"
-ThisBuild / organizationName := "exchange"
-ThisBuild / scalaVersion := versions.scala2
-ThisBuild / crossScalaVersions := Seq(versions.scala2, versions.scala3)
-
 lazy val modulesDir = file("modules")
 
 lazy val domain = project in modulesDir / "domain"
@@ -24,6 +16,9 @@ lazy val app = (project in modulesDir / "app")
 
 lazy val root = (project in file("."))
   .aggregate(app, api, domain, repository, infra)
+  .settings(
+    name := "exchange-platform"
+  )
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value
