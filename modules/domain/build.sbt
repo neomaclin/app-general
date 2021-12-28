@@ -1,10 +1,8 @@
 import Dependencies._
 
-name := "domain"
+name := "exchange-domain"
 
 libraryDependencies ++= cats
-
-crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
 
 scalacOptions ++= defaultScalacOptions
 

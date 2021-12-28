@@ -1,10 +1,8 @@
 import Dependencies._
 
-name := "api"
+name := "exchange-api"
 
 libraryDependencies ++= tapir ++ circe
-
-crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
 
 scalacOptions ++= defaultScalacOptions
 

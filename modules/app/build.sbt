@@ -1,10 +1,8 @@
 import Dependencies._
 
-name := "client"
+name := "exchange-app"
 
 scalacOptions ++= defaultScalacOptions
-
-crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
 
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value
@@ -17,3 +15,5 @@ scalafmtAll := {
   (Compile / scalafmt).value
   (Test / scalafmt).value
 }
+
+enablePlugins(JavaAppPackaging)

@@ -1,8 +1,6 @@
 import Dependencies._
 
-name := "repository"
-
-crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
+name := "exchange-repository"
 
 scalacOptions ++= defaultScalacOptions
 
@@ -17,3 +15,5 @@ scalafmtAll := {
   (Compile / scalafmt).value
   (Test / scalafmt).value
 }
+
+enablePlugins(JavaAppPackaging)
