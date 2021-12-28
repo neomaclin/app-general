@@ -1,4 +1,5 @@
 import Dependencies._
+import Settings._
 
 name := "exchange-infra"
 
@@ -8,16 +9,10 @@ libraryDependencies ++= Seq(
   "com.github.jwt-scala" %% "jwt-circe" % "9.0.2",
 )
 
+defaultScalaVersion
+defaultCrossScalaVersions
+
 scalacOptions ++= defaultScalacOptions
 
-scalafmtCheckAll := {
-  (Compile / scalafmtSbtCheck).value
-  (Compile / scalafmtCheck).value
-  (Test / scalafmtCheck).value
-}
-
-scalafmtAll := {
-  (Compile / scalafmtSbt).value
-  (Compile / scalafmt).value
-  (Test / scalafmt).value
-}
+fmtCheck
+fmt

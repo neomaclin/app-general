@@ -1,19 +1,14 @@
 import Dependencies._
+import Settings._
 
 name := "exchange-domain"
 
 libraryDependencies ++= cats
 
+defaultScalaVersion
+defaultCrossScalaVersions
+
 scalacOptions ++= defaultScalacOptions
 
-scalafmtCheckAll := {
-  (Compile / scalafmtSbtCheck).value
-  (Compile / scalafmtCheck).value
-  (Test / scalafmtCheck).value
-}
-
-scalafmtAll := {
-  (Compile / scalafmtSbt).value
-  (Compile / scalafmt).value
-  (Test / scalafmt).value
-}
+fmtCheck
+fmt

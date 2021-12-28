@@ -1,3 +1,8 @@
+import Settings.{defaultCrossScalaVersions, fmt, fmtCheck, defaultScalaVersion}
+
+defaultScalaVersion
+defaultCrossScalaVersions
+
 lazy val modulesDir = file("modules")
 
 lazy val domain = project in modulesDir / "domain"
@@ -17,17 +22,8 @@ lazy val app = (project in modulesDir / "app")
 lazy val root = (project in file("."))
   .aggregate(app, api, domain, repository, infra)
   .settings(
-    name := "exchange-platform"
+    name := "exchange-platform",
   )
 
-scalafmtCheckAll := {
-  (Compile / scalafmtSbtCheck).value
-  (Compile / scalafmtCheck).value
-  (Test / scalafmtCheck).value
-}
-
-scalafmtAll := {
-  (Compile / scalafmtSbt).value
-  (Compile / scalafmt).value
-  (Test / scalafmt).value
-}
+fmtCheck
+fmt
