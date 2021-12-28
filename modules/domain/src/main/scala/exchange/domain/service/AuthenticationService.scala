@@ -1,22 +1,10 @@
 package exchange.domain.service
 
 import exchange.domain.entity.Token
+import exchange.domain.infra.JwtComponentAlgebra
 
-trait AuthenticationService[F[_]] {
-  def createToken(username: String): F[Token]
+class AuthenticationService[F[_]](jwtComponentAlgebra: JwtComponentAlgebra[F]) {
+  def createToken(username: String): F[Token] = jwtComponentAlgebra.createToken(username)
 
-  def verifyToken(token: Token): F[Boolean]
-
-  def getCredential(token: Token): F[String]
-}
-
-object AuthenticationService {
-  def apply[F[_]]: AuthenticationService[F] =
-    new AuthenticationService[F] {
-      override def createToken(username: String): F[Token] = ???
-
-      override def verifyToken(token: Token): F[Boolean] = ???
-
-      override def getCredential(token: Token): F[String] = ???
-    }
+  def getUsername(token: Token): F[String] = jwtComponentAlgebra.getUsername(token)
 }

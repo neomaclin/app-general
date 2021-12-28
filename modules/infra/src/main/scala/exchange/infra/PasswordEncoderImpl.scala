@@ -5,7 +5,7 @@ import cats.implicits._
 import exchange.domain.infra
 import org.springframework.security.crypto.password
 
-class PasswordEncoderImpl[F[_]: Applicative](encoder: password.PasswordEncoder) extends infra.PasswordEncoder[F] {
+class PasswordEncoderImpl[F[_]: Applicative](encoder: password.PasswordEncoder) extends infra.PasswordEncoderAlgebra[F] {
   override def encode(rawPassword: String): F[String] =
     encoder.encode(rawPassword).pure[F]
 
