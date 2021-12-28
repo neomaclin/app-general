@@ -5,5 +5,5 @@ final case class CreateOrderRequest(
     symbol: String,
     orderType: String,
     amount: String,
-    price: Option[String]
+    price: Option[String],
 )

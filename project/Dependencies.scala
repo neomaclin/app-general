@@ -13,12 +13,12 @@ object Dependencies {
 
   val tapir = Seq(
     "com.softwaremill.sttp.tapir" %% "tapir-core" % versions.tapir,
-    "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % versions.tapir
+    "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % versions.tapir,
   )
 
   val cats = Seq(
     "org.typelevel" %% "cats-core" % versions.cats,
-    "org.typelevel" %% "cats-kernel" % versions.cats
+    "org.typelevel" %% "cats-kernel" % versions.cats,
   )
 
   val defaultScalacOptions = Seq(
@@ -26,22 +26,22 @@ object Dependencies {
     "-deprecation",
     "-unchecked",
     "-language:postfixOps",
-    "-language:higherKinds"
+    "-language:higherKinds",
   )
 
   val distage = Seq(
     "io.7mind.izumi" %% "distage-core" % versions.distage,
     "io.7mind.izumi" %% "distage-testkit-core" % versions.distage % Test,
-    "io.7mind.izumi" %% "distage-testkit-scalatest" % versions.distage % Test
+    "io.7mind.izumi" %% "distage-testkit-scalatest" % versions.distage % Test,
   )
 
   val circe = Seq(
     "io.circe" %% "circe-core" % versions.circe,
     "io.circe" %% "circe-generic" % versions.circe,
-    "io.circe" %% "circe-parser" % versions.circe
+    "io.circe" %% "circe-parser" % versions.circe,
   )
 
   val mongo = Seq(
-    "org.reactivemongo" %% "reactivemongo" % versions.reactiveMongo
+    "org.reactivemongo" %% "reactivemongo" % versions.reactiveMongo,
   )
 }

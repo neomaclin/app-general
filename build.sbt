@@ -27,7 +27,7 @@ lazy val root = (project in file("."))
     organizationName := "exchange",
     name := "exchange",
     scalaVersion := versions.scala2,
-    crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
+    crossScalaVersions ++= Seq(versions.scala2, versions.scala3),
   )
 
 scalafmtCheckAll := {

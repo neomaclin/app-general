@@ -10,5 +10,5 @@ final case class Order(
     orderStatus: OrderStatus,
     orderType: OrderType,
     amount: String,
-    price: Option[String]
+    price: Option[String],
 )

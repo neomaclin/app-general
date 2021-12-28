@@ -15,7 +15,7 @@ trait AccountOwnerService[F[_]] {
 object AccountOwnerService {
   def apply[F[_]: Monad](
       accountOwnerRepository: AccountOwnerRepository[F],
-      passwordEncoder: PasswordEncoder[F]
+      passwordEncoder: PasswordEncoder[F],
   ): AccountOwnerService[F] =
     new AccountOwnerService[F] {
       override def create(username: String, password: String): F[AccountOwner] =
