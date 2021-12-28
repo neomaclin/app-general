@@ -4,6 +4,8 @@ name := "api"
 
 libraryDependencies ++= tapir ++ circe
 
+crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
+
 scalacOptions ++= defaultScalacOptions
 
 scalafmtCheckAll := {

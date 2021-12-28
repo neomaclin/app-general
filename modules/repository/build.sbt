@@ -2,7 +2,7 @@ import Dependencies._
 
 name := "repository"
 
-libraryDependencies ++= mongo
+crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
 
 scalacOptions ++= defaultScalacOptions
 

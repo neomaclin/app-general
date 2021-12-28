@@ -4,6 +4,8 @@ name := "metric"
 
 scalacOptions ++= defaultScalacOptions
 
+crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
+
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value
   (Compile / scalafmtCheck).value

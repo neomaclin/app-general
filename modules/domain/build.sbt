@@ -4,6 +4,8 @@ name := "domain"
 
 libraryDependencies ++= cats
 
+crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
+
 scalacOptions ++= defaultScalacOptions
 
 scalafmtCheckAll := {

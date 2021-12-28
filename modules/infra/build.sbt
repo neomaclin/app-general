@@ -7,6 +7,8 @@ libraryDependencies ++= Seq(
   "commons-logging" % "commons-logging" % "1.2" // because of spring-security-crypto
 )
 
+crossScalaVersions ++= Seq(versions.scala2, versions.scala3)
+
 scalacOptions ++= defaultScalacOptions
 
 scalafmtCheckAll := {

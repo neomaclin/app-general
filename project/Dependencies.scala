@@ -38,7 +38,6 @@ object Dependencies {
   val circe = Seq(
     "io.circe" %% "circe-core" % versions.circe,
     "io.circe" %% "circe-generic" % versions.circe,
-    "io.circe" %% "circe-generic-extras" % versions.circe,
     "io.circe" %% "circe-parser" % versions.circe
   )
 
