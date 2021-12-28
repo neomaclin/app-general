@@ -7,8 +7,8 @@ import exchange.domain.infra.PasswordEncoderAlgebra
 import exchange.domain.repository.AccountOwnerRepositoryAlgebra
 
 class AccountOwnerService[F[_]: Monad](
-                                        accountOwnerRepository: AccountOwnerRepositoryAlgebra[F],
-                                        passwordEncoder: PasswordEncoderAlgebra[F],
+    accountOwnerRepository: AccountOwnerRepositoryAlgebra[F],
+    passwordEncoder: PasswordEncoderAlgebra[F],
 ) {
   def create(username: String, password: String): F[AccountOwner] =
     for {
@@ -27,8 +27,8 @@ class AccountOwnerService[F[_]: Monad](
 
 object AccountOwnerService {
   def apply[F[_]: Monad](
-                          accountOwnerRepository: AccountOwnerRepositoryAlgebra[F],
-                          passwordEncoder: PasswordEncoderAlgebra[F],
+      accountOwnerRepository: AccountOwnerRepositoryAlgebra[F],
+      passwordEncoder: PasswordEncoderAlgebra[F],
   ): AccountOwnerService[F] =
     new AccountOwnerService[F](accountOwnerRepository, passwordEncoder)
 }
