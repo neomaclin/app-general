@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
 
 defaultScalaVersion
 defaultCrossScalaVersions
+projectVersionSetting
 
 scalacOptions ++= defaultScalacOptions
 

@@ -5,6 +5,7 @@ name := "exchange-repository"
 
 defaultScalaVersion
 defaultCrossScalaVersions
+projectVersionSetting
 
 scalacOptions ++= defaultScalacOptions
 

@@ -5,6 +5,7 @@ name := "exchange-api"
 
 defaultScalaVersion
 defaultCrossScalaVersions
+projectVersionSetting
 
 libraryDependencies ++= tapir ++ circe
 

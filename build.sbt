@@ -1,7 +1,8 @@
-import Settings.{defaultCrossScalaVersions, fmt, fmtCheck, defaultScalaVersion}
+import Settings._
 
 defaultScalaVersion
 defaultCrossScalaVersions
+projectVersionSetting
 
 lazy val modulesDir = file("modules")
 
@@ -22,6 +23,8 @@ lazy val app = (project in modulesDir / "app")
 lazy val root = (project in file("."))
   .aggregate(app, api, domain, repository, infra)
   .settings(
+    organization := "com.github.scalax",
+    organizationName := "scalax",
     name := "exchange-platform",
   )
 

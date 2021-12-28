@@ -7,6 +7,7 @@ libraryDependencies ++= cats
 
 defaultScalaVersion
 defaultCrossScalaVersions
+projectVersionSetting
 
 scalacOptions ++= defaultScalacOptions
 

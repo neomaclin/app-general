@@ -1,10 +1,11 @@
 import Dependencies._
-import Settings.{defaultCrossScalaVersions, defaultScalaVersion, fmt, fmtCheck}
+import Settings._
 
 name := "exchange-app"
 
 defaultScalaVersion
 defaultCrossScalaVersions
+projectVersionSetting
 
 scalacOptions ++= defaultScalacOptions
 
