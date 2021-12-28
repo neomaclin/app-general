@@ -1,3 +1,3 @@
-package exchange.domain.entities
+package exchange.domain.entity
 
 final case class Token(token: String)

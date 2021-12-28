@@ -1,4 +1,4 @@
-package exchange.persistence
+package exchange.repository
 
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.MongoConnection.ParsedURI

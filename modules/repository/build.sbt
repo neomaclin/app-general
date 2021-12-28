@@ -1,6 +1,6 @@
 import Dependencies._
 
-name := "persistence"
+name := "repository"
 
 libraryDependencies ++= mongo
 

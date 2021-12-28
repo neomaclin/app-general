@@ -1,4 +1,4 @@
-package exchange.domain.entities
+package exchange.domain.entity
 
 import exchange.domain.vo.OrderStatusEnum.OrderStatus
 import exchange.domain.vo.OrderTypeEnum.OrderType

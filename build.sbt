@@ -15,7 +15,7 @@ lazy val api = (project in modulesDir / "api")
 lazy val client = (project in modulesDir / "client")
   .dependsOn(domain)
 
-lazy val persistence = (project in modulesDir / "persistence")
+lazy val repository = (project in modulesDir / "repository")
   .dependsOn(domain)
 
 lazy val metric = (project in modulesDir / "metric")
@@ -25,7 +25,7 @@ lazy val infra = (project in modulesDir / "infra")
   .dependsOn(domain)
 
 lazy val root = (project in file("."))
-  .aggregate(domain, api, client, persistence, metric, infra)
+  .aggregate(domain, api, client, repository, metric, infra)
   .settings(
     name := "exchange"
   )

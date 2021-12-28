@@ -1,7 +1,7 @@
 package exchange.api
 
 import exchange.api.requests.CreateOrderRequest
-import exchange.domain.entities.{Account, Token}
+import exchange.domain.entity.{Account, Token}
 import exchange.domain.vo.{Message, OrderTypeEnum}
 import io.circe.generic.auto._
 import sttp.tapir.generic.auto._
