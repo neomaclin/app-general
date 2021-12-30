@@ -7,6 +7,8 @@ defaultScalaVersion
 defaultCrossScalaVersions
 projectVersionSetting
 
+libraryDependencies ++= akka
+
 scalacOptions ++= defaultScalacOptions
 
 fmtCheck

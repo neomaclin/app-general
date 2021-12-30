@@ -26,6 +26,7 @@ lazy val root = (project in file("."))
     organization := "com.github.scalax",
     organizationName := "scalax",
     name := "exchange-platform",
+    scalacOptions ++= defaultScalacOptions,
   )
 
 fmtCheck

@@ -27,4 +27,9 @@ object Settings {
   private val licensesSetting = licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
   val projectVersionSetting = Seq(versionSetting, organizationSetting, licensesSetting)
+
+  val defaultScalacOptions = Seq(
+    "-deprecation",
+    "-Xsource:3",
+  )
 }

@@ -4,12 +4,18 @@ object Dependencies {
   object versions {
     val scala2 = "2.13.7"
     val scala3 = "3.1.0"
+    val akka = "2.6.18"
     val cats = "2.7.0"
     val distage = "1.0.8"
     val tapir = "0.19.3"
     val circe = "0.14.1"
-    val reactiveMongo = "1.0.10"
+    val doobie = "1.0.0-RC1"
   }
+
+  val akka = Seq(
+    "com.typesafe.akka" %% "akka-actor-typed" % versions.akka,
+    "com.typesafe.akka" %% "akka-stream" % versions.akka,
+  )
 
   val tapir = Seq(
     "com.softwaremill.sttp.tapir" %% "tapir-core" % versions.tapir,
@@ -19,14 +25,6 @@ object Dependencies {
   val cats = Seq(
     "org.typelevel" %% "cats-core" % versions.cats,
     "org.typelevel" %% "cats-kernel" % versions.cats,
-  )
-
-  val defaultScalacOptions = Seq(
-    "-feature",
-    "-deprecation",
-    "-unchecked",
-    "-language:postfixOps",
-    "-language:higherKinds",
   )
 
   val distage = Seq(
@@ -41,7 +39,10 @@ object Dependencies {
     "io.circe" %% "circe-parser" % versions.circe,
   )
 
-  val mongo = Seq(
-    "org.reactivemongo" %% "reactivemongo" % versions.reactiveMongo,
+  val doobie = Seq(
+    "org.tpolecat" %% "doobie-core" % "1.0.0-RC1",
+    "org.tpolecat" %% "doobie-hikari" % "1.0.0-RC1",
+    "org.tpolecat" %% "doobie-postgres" % "1.0.0-RC1",
+    "org.tpolecat" %% "doobie-scalatest" % "1.0.0-RC1" % Test,
   )
 }

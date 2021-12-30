@@ -7,6 +7,8 @@ defaultScalaVersion
 defaultCrossScalaVersions
 projectVersionSetting
 
+libraryDependencies ++= doobie
+
 scalacOptions ++= defaultScalacOptions
 
 fmtCheck
