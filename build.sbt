@@ -1,32 +1,33 @@
+import Settings._
 
-lazy val domain = (project in file("modules/domain"))
+defaultScalaVersion
+defaultCrossScalaVersions
+projectVersionSetting
 
-lazy val api = (project in file("modules/api")).dependsOn(domain)
+lazy val modulesDir = file("modules")
 
-lazy val client = (project in file("modules/client")).dependsOn(domain)
+lazy val domain = project in modulesDir / "domain"
 
-lazy val persistence = (project in file("modules/persistence")).dependsOn(domain)
+lazy val api = (project in modulesDir / "api")
+  .dependsOn(domain)
 
-lazy val metric = (project in file("modules/metric")).dependsOn(domain)
+lazy val repository = (project in modulesDir / "repository")
+  .dependsOn(domain)
 
-lazy val infra = (project in file("modules/infra")).dependsOn(domain)
+lazy val infra = (project in modulesDir / "infra")
+  .dependsOn(domain)
+
+lazy val app = (project in modulesDir / "app")
+  .dependsOn(domain, api, repository, infra)
 
 lazy val root = (project in file("."))
+  .aggregate(app, api, domain, repository, infra)
   .settings(
-    name := "GeneralApp",
-    idePackagePrefix := Some("com.group.quasi") ,
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "2.13.7"
+    organization := "com.github.scalax",
+    organizationName := "scalax",
+    name := "exchange-platform",
+    scalacOptions ++= defaultScalacOptions,
   )
 
-scalafmtCheckAll := {
-  (Compile/scalafmtSbtCheck).value
-  (Compile/scalafmtCheck).value
-  (Test/scalafmtCheck).value
-}
-
-scalafmtAll := {
-  (Compile/scalafmtSbt).value
-  (Compile/scalafmt).value
-  (Test/scalafmt).value
-}
+fmtCheck
+fmt

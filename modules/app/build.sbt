@@ -1,15 +1,17 @@
 import Dependencies._
 import Settings._
 
-name := "exchange-domain"
-
-libraryDependencies ++= cats
+name := "exchange-app"
 
 defaultScalaVersion
 defaultCrossScalaVersions
 projectVersionSetting
 
+libraryDependencies ++= akka
+
 scalacOptions ++= defaultScalacOptions
 
 fmtCheck
 fmt
+
+enablePlugins(JavaAppPackaging)

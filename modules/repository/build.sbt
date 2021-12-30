@@ -1,13 +1,13 @@
 import Dependencies._
 import Settings._
 
-name := "exchange-domain"
-
-libraryDependencies ++= cats
+name := "exchange-repository"
 
 defaultScalaVersion
 defaultCrossScalaVersions
 projectVersionSetting
+
+libraryDependencies ++= doobie
 
 scalacOptions ++= defaultScalacOptions
 
