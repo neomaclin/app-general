@@ -1,0 +1,28 @@
+version: '3'
+services:
+  app:
+    image: 'app-general:latest'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+      - mailhog
+    environment:
+      SQL_USERNAME: 'postgres'
+      SQL_PASSWORD: 'admin'
+      SQL_DBNAME: 'admin'
+      SQL_HOST: 'app-db'
+      SQL_PORT: '5432'
+      API_HOST: '0.0.0.0'
+      SMTP_ENABLED: 'true'
+      SMTP_HOST: 'app-mailhog'
+      SMTP_PORT: '1025'
+  app-db:
+    image: 'postgres'
+    ports:
+      - '25432:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'admin'
+      POSTGRES_DB: 'admin'
+

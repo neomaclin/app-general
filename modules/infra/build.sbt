@@ -1,19 +1,26 @@
 import Dependencies._
 import Settings._
 
-name := "exchange-infra"
+name := "infra"
 
-libraryDependencies ++= Seq(
-  "org.springframework.security" % "spring-security-crypto" % "5.6.0",
-  "commons-logging" % "commons-logging" % "1.2", // because of spring-security-crypto
-  "com.github.jwt-scala" %% "jwt-circe" % "9.0.2",
-)
+libraryDependencies ++= akka ++ akkaHttp ++ alpakka ++ distage ++ configSupport ++ common
+libraryDependencies ++= emailDependencies ++ quartzScheduler
 
-defaultScalaVersion
-defaultCrossScalaVersions
-projectVersionSetting
+scalaVersion := versions.scala2
+crossScalaVersions := Seq(versions.scala2, versions.scala3)
+scalafmtCheckAll := {
+  (Compile / scalafmtSbtCheck).value
+  (Compile / scalafmtCheck).value
+  (Test / scalafmtCheck).value
+  //  (IntegrationTest / scalafmtCheck).value
+}
+scalafmtAll := {
+  (Compile / scalafmtSbt).value
+  (Compile / scalafmt).value
+  (Test / scalafmt).value
+  // (IntegrationTest / scalafmt).value
+}
 
 scalacOptions ++= defaultScalacOptions
 
-fmtCheck
-fmt
+Compile / TwirlKeys.compileTemplates / sourceDirectories := (Compile / unmanagedSourceDirectories).value

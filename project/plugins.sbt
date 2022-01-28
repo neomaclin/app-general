@@ -1,6 +1,12 @@
-addDependencyTreePlugin
 addSbtPlugin("org.jetbrains.scala" % "sbt-ide-settings" % "1.1.1")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.32")
 addSbtPlugin("ch.epfl.scala" % "sbt-version-policy" % "2.0.1")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.3")
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.7")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.1.0")
+addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.4")
+addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.2")
+addSbtPlugin("com.typesafe.play" % "sbt-twirl" % "1.6.0-M1")
+addSbtPlugin("io.github.davidmweber" % "flyway-sbt" % "7.4.0")
+addDependencyTreePlugin
