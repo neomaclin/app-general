@@ -15,11 +15,12 @@ object Dependencies {
     val bytebuddy = "1.12.7"
     val scalaTest = "3.2.10"
     val scalaMock = "5.2.0"
-    val mockito = "1.16.49"
+    val mockito = "1.17.0"
     val scalaLogging = "3.9.4"
     val logback = "1.2.10"
     val refined = "0.9.28"
     val alpakka = "3.0.4"
+    val jwt = "9.0.3"
   }
 
   val akka = Seq(
@@ -34,9 +35,11 @@ object Dependencies {
   )
 
   val alpakka = Seq(
+    "com.lightbend.akka" %% "akka-stream-alpakka-amqp",
+    "com.lightbend.akka" %% "akka-stream-alpakka-sqs",
+    "com.lightbend.akka" %% "akka-stream-alpakka-sns",
     "com.lightbend.akka" %% "akka-stream-alpakka-slick",
     "com.lightbend.akka" %% "akka-stream-alpakka-dynamodb",
-    "com.lightbend.akka" %% "akka-stream-alpakka-elasticsearch",
     "com.lightbend.akka" %% "akka-stream-alpakka-s3",
     "com.lightbend.akka" %% "akka-stream-alpakka-ftp",
     "com.lightbend.akka" %% "akka-stream-alpakka-file",
@@ -50,7 +53,7 @@ object Dependencies {
     "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs",
     "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe",
     "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml",
-    //"com.softwaremill.sttp.tapir" %% "tapir-refined"
+    "com.softwaremill.sttp.tapir" %% "tapir-refined"
   ).map(_ % versions.tapir)
 
   val cats = Seq(
@@ -62,10 +65,10 @@ object Dependencies {
     "io.7mind.izumi" %% "distage-core" % versions.distage,
   )
 
-//  val distageTest = Seq(
-//    "io.7mind.izumi" %% "distage-testkit-core" % versions.distage,
-//    "io.7mind.izumi" %% "distage-testkit-scalatest" % versions.distage,
-//  )
+  val distageTest = Seq(
+    "io.7mind.izumi" %% "distage-testkit-core" % versions.distage,
+    "io.7mind.izumi" %% "distage-testkit-scalatest" % versions.distage,
+  )
 
   val configSupport = Seq(
     "com.github.pureconfig" %% "pureconfig" % versions.configSupport,
@@ -118,7 +121,7 @@ object Dependencies {
   )
 
   val jwt = Seq(
-    "com.github.jwt-scala" %% "jwt-circe" % "9.0.3",
+    "com.github.jwt-scala" %% "jwt-circe" % versions.jwt,
   )
 
 
@@ -136,4 +139,7 @@ object Dependencies {
     "com.softwaremill.common" %% "id-generator" % "1.3.1"
   )
 
+  val flyway = Seq(
+    "org.flywaydb" % "flyway-core" % "8.4.2"
+  )
 }

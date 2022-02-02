@@ -3,7 +3,7 @@
 ## Build Application
 
 ```
-sbt app/stage
+sbt clean compile
 ```
 
 ## Run Application

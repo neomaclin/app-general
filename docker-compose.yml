@@ -1,0 +1,46 @@
+version: '3'
+services:
+  app:
+    build:
+      dockerfile: Dockerfile-local
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+      - smtp
+      - mq
+    environment:
+      DATABASE_URL: "jdbc:postgresql://db/app"
+      SQL_USERNAME: 'postgres'
+      SQL_PASSWORD: 'admin'
+      SQL_DBNAME: 'app'
+      SQL_HOST: 'db'
+      SQL_PORT: 5432
+      SMTP_USERNAME: 'postgres'
+      SMTP_PASSWORD: 'admin'
+      SMTP_HOST: 'smtp'
+      SMTP_SSL_CONNECTION: false
+      SMTP_VERIFY_SSL_CERTIFICATE: false
+      SMTP_PORT: 587
+      MQ_HOST: mq
+      MQ_PORT: 5672
+      API_HOST: '0.0.0.0'
+      API_PORT: 8080
+  db:
+    image: 'postgres'
+    ports:
+      - '25432:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'admin'
+      POSTGRES_DB: 'app'
+  smtp:
+    image: 'namshi/smtp'
+    ports:
+      - '2587:587'
+  mq:
+    image: 'rabbitmq:3.9'
+    ports:
+      - '25672:5672'
+
+
