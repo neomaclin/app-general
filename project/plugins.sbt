@@ -8,5 +8,4 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.1.0")
 addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.4")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.2")
 addSbtPlugin("com.typesafe.play" % "sbt-twirl" % "1.6.0-M1")
-addSbtPlugin("io.github.davidmweber" % "flyway-sbt" % "7.4.0")
 addDependencyTreePlugin

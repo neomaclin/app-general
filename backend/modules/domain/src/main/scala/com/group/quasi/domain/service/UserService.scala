@@ -10,16 +10,14 @@ trait UserService[F[_]] {
 
   def login(
       requestFrom: String,
-      user: String,
+      loginAs: String,
       password: String,
       email: Option[String] = None,
       phone: Option[String] = None,
   ): F[Either[LoginFailure, LoginSuccess]]
 
-  def lookup(user: SuccessContent): F[Either[Unit,Option[User]]]
+  def logout(loginAs: String): F[Either[Unit, Unit]]
 
-  def logout(user: User): F[Either[Unit, Unit]]
-//
-//  def updatePassword(user: User, current: String, proposed:String): F[Either[Unit,Unit]]
+  def updatePassword(loginAs: String, current: String, proposed: String): F[Either[Unit, Unit]]
 
 }

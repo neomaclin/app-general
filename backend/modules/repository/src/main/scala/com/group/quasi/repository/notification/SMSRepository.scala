@@ -6,7 +6,7 @@ import com.group.quasi.repository.{PostgresProfile, SlickRepository}
 
 import scala.concurrent.Future
 
-class EmailRepository(implicit override val session: SlickSession) extends SlickRepository {
+class SMSRepository(implicit override val session: SlickSession) extends SlickRepository {
   import PostgresProfile.api._
   import slick.jdbc.GetResult
   implicit private val getResult: GetResult[NotificationData] =
@@ -14,20 +14,20 @@ class EmailRepository(implicit override val session: SlickSession) extends Slick
 
   def insert(entry: NotificationData): Future[Int] = {
     session.db.run(
-      sqlu"""INSERT INTO scheduled_email (recipient,subject,content) VALUES(${entry.recipient}, ${entry.subject} ,${entry.content})""",
+      sqlu"""INSERT INTO scheduled_sms (recipient,subject,content) VALUES(${entry.recipient}, ${entry.subject} ,${entry.content})""",
     )
   }
 
   def findLatestBatch(): Future[Seq[NotificationData]] = {
     session.db.run(
-      sql"""select recipient,subject,content from scheduled_email order by created_on desc limit 1024"""
+      sql"""select recipient,subject,content from scheduled_sms order by created_on desc limit 1024"""
         .as[NotificationData],
     )
   }
 
   def removeSent(entries: Seq[NotificationData]): Future[Int] = {
     session.db.run(
-      sqlu"""delete from scheduled_email where recipient in ${entries.map(_.recipient).mkString("(", ",", ")")}""",
+      sqlu"""delete from scheduled_sms where recipient in ${entries.map(_.recipient).mkString("(", ",", ")")}""",
     )
   }
 

@@ -7,7 +7,7 @@ object Dependencies {
     val akka = "2.6.18"
     val akkaHttp = "10.2.7"
     val cats = "2.7.0"
-    val distage = "1.0.8"
+    val distage = "1.0.9"
     val tapir = "0.19.3"
     val circe = "0.14.1"
     val doobie = "1.0.0-RC1"
@@ -25,7 +25,7 @@ object Dependencies {
 
   val akka = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % versions.akka,
-    "com.typesafe.akka" %% "akka-stream" % versions.akka,
+    "com.typesafe.akka" %% "akka-stream-typed" % versions.akka,
   )
 
   val akkaHttp = Seq(
@@ -92,7 +92,7 @@ object Dependencies {
   )
 
   val phoneDependencies = Seq(
-    "com.googlecode.libphonenumber" % "libphonenumber" % "8.12.41",
+    "com.googlecode.libphonenumber" % "libphonenumber" % "8.12.42",
   )
 
   val scalaTest = Seq(
@@ -140,6 +140,6 @@ object Dependencies {
   )
 
   val flyway = Seq(
-    "org.flywaydb" % "flyway-core" % "8.4.2"
+    "org.flywaydb" % "flyway-core" % "8.4.3"
   )
 }

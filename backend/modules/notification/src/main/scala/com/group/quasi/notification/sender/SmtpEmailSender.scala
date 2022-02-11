@@ -1,6 +1,6 @@
 package com.group.quasi.notification.sender
 
-import cats.Monad
+import cats.MonadThrow
 import cats.implicits._
 import com.group.quasi.domain.infra.notification.{NotificationData, NotificationSender, SmtpConfig}
 
@@ -12,25 +12,29 @@ import javax.mail.{Address, Message, Session, Transport}
   */
 class SmtpEmailSender[F[_]: MonadThrow](config: SmtpConfig) extends NotificationSender[F] {
 
-  def send(notification: NotificationData): F[Unit] = for {
-    emailToSend <- new SmtpEmailSender.EmailDescription(
-      List(notification.recipient),
-      notification.content,
-      notification.subject,
-    ).pure[F]
-  } yield {
-    SmtpEmailSender.send(
-      config.host,
-      config.port,
-      config.username,
-      config.password,
-      config.verifySslCertificate,
-      config.sslConnection,
-      config.from,
-      config.encoding,
-      emailToSend,
+  def send(notification: NotificationData): F[NotificationData] = (for {
+    emailToSend <- MonadThrow[F].pure(
+      new SmtpEmailSender.EmailDescription(
+        List(notification.recipient),
+        notification.content,
+        notification.subject,
+      ),
     )
-  }
+    _ <- MonadThrow[F].catchNonFatal(
+      SmtpEmailSender.send(
+        config.host,
+        config.port,
+        config.username,
+        config.password,
+        config.verifySslCertificate,
+        config.sslConnection,
+        config.from,
+        config.encoding,
+        emailToSend,
+      ),
+    )
+  } yield notification).recover(_ => notification)
+
 }
 
 //

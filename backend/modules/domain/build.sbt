@@ -11,13 +11,11 @@ scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value
   (Compile / scalafmtCheck).value
   (Test / scalafmtCheck).value
-  //  (IntegrationTest / scalafmtCheck).value
 }
 scalafmtAll := {
   (Compile / scalafmtSbt).value
   (Compile / scalafmt).value
   (Test / scalafmt).value
-  // (IntegrationTest / scalafmt).value
 }
 
 scalacOptions ++= defaultScalacOptions

@@ -1,23 +1,22 @@
 package com.group.quasi.repository
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.stream.alpakka.slick.scaladsl.Slick
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.actor.typed.ActorSystem
+import akka.stream.alpakka.slick.scaladsl.SlickSession
 import com.group.quasi.domain.persistence.repository.DBConfig
 import org.flywaydb.core.Flyway
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
-class RepoMigration(override val config: DBConfig, val postgresProfile: PostgresProfile)(implicit override val system: ActorSystem)
-  extends SlickRepository{
-  import postgresProfile.api._
+class RepoMigration(config: DBConfig)(implicit override val session: SlickSession, system: ActorSystem[Nothing])
+    extends SlickRepository {
+  import PostgresProfile.api._
+  implicit val ec: ExecutionContextExecutor = system.executionContext
 
   def connectAndMigrate(): Future[Unit] = {
-    migrate()
-      .via(testConnection())
-      .log("db-migration")
-       .runWith(Sink.ignore.mapMaterializedValue(_=>Future.unit))
+    for {
+      _ <- migrate()
+      _ <- testConnection()
+    } yield ()
   }
 
   private val flyway = {
@@ -27,13 +26,11 @@ class RepoMigration(override val config: DBConfig, val postgresProfile: Postgres
       .load()
   }
 
-  private def migrate(): Source[Unit,NotUsed] = {
-    if (config.migrateOnStart) Source.future(Future.successful(flyway.migrate()))
-    else Source.empty[Unit]
+  private def migrate() = {
+    if (config.migrateOnStart) Future(flyway.migrate()).map(_ => ()) else Future.unit
   }
 
-  private def testConnection():Flow[Unit,Int,NotUsed]  =
-    Flow.fromSinkAndSourceCoupled(Sink.ignore, Slick.source(sql"""Select 1""".as[Int]))
-
+  private def testConnection() =
+    session.db.run(sql"""Select 1""".as[Int])
 
 }

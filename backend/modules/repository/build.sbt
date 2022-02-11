@@ -1,8 +1,6 @@
 import Dependencies._
 import Settings._
 
-enablePlugins(FlywayPlugin)
-
 name := "repository"
 
 scalaVersion := versions.scala2
@@ -20,14 +18,6 @@ scalafmtAll := {
   // (IntegrationTest / scalafmt).value
 }
 
-libraryDependencies ++= alpakka ++ slickPg ++ flyway
+libraryDependencies ++= akka ++ alpakka ++ slickPg ++ flyway
 
 scalacOptions ++= defaultScalacOptions
-
-flywayUrl := "jdbc:postgresql://127.0.0.1/app-db"
-flywayUser := "admin"
-flywayPassword := "admin"
-flywayLocations += "db/migration"
-//flywayUrl in Test := "jdbc:hsqldb:file:target/flyway_sample;shutdown=true"
-//flywayUser in Test := "SA"
-//flywayPassword in Test := ""

@@ -20,7 +20,7 @@ package object users {
       email: String,
       password: String,
       phone: Option[String],
-      active: Boolean
+      active: Boolean,
   )
 
   final case class UserProfile(
@@ -32,10 +32,12 @@ package object users {
       preferredContact: String,
       gender: String,
       snAccounts: List[String],
+      updatedOn: Instant,
       memo: String,
   )
 
   final case class ActivationFailure(msg: String)
+
   final case class ActivationSuccess(msg: String)
 
   final case class LoginFailure(requestFrom: String, attemptedAt: Instant, attemptCount: Int)
@@ -44,5 +46,4 @@ package object users {
 
   final case class LoginSuccess(loginAt: Instant, content: SuccessContent)
 
-//  final case class LogoutFailure(loginAt:Instant, asRole: String)
 }

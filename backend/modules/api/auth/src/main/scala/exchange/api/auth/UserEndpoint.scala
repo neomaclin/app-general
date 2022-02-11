@@ -46,12 +46,11 @@ object UserEndpoint {
 
     val changePassword: Endpoint[Try[
       (JwtHeader, JwtClaim, String),
-    ], PasswordResetRequest, PasswordResetFailure, PasswordResetResponse, Any] =
+    ], PasswordResetRequest, Unit, PasswordResetResponse, Any] =
       securedEndpoint.post
         .in(UserPath / "changepassword")
         .in(jsonBody[PasswordResetRequest])
         .out(jsonBody[PasswordResetResponse])
-        .errorOut(jsonBody[PasswordResetFailure])
 
   }
 }

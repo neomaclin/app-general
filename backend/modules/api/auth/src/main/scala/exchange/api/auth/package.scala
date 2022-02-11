@@ -81,9 +81,7 @@ package object auth {
   }
   final case class PasswordResetRequest(current: Password, proposed: Password)
 
-  final case class PasswordResetResponse()
-
-  final case class PasswordResetFailure()
+  final case class PasswordResetResponse(msg: String)
 
   final case class JwtConfig(
       publicKey: PublicKey,

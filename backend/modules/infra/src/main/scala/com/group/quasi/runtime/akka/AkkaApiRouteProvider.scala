@@ -12,19 +12,19 @@ import akka.stream.alpakka.s3.ObjectMetadata
 import akka.stream.alpakka.s3.scaladsl.S3
 import akka.stream.scaladsl._
 import akka.util.ByteString
-import cats.data.{EitherT, OptionT}
+import cats.data.EitherT
 import cats.implicits._
 import com.group.quasi.domain.infra.storage._
-import com.group.quasi.domain.model.users.{SuccessContent, User, UserConfig}
+import com.group.quasi.domain.model.users.{SuccessContent, UserConfig}
 import com.group.quasi.domain.service.UserService
 import exchange.api.auth._
-import io.circe
 import io.circe.generic.auto._
+import io.circe.syntax.EncoderOps
 import pdi.jwt.{JwtCirce, JwtClaim, JwtHeader}
 import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
 
 import java.net.InetAddress
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.Try
 
 class AkkaApiRouteProvider(
@@ -38,15 +38,8 @@ class AkkaApiRouteProvider(
 
   private def checkClaims(
       jwtToken: Try[(JwtHeader, JwtClaim, String)],
-  )(implicit ec: ExecutionContext): Future[Either[Unit, Option[User]]] = {
-    (for {
-
-      fulltoken <- EitherT.fromEither[Future](jwtToken.toEither).leftMap(_ => ())
-      content <- EitherT
-        .fromEither[Future](circe.parser.parse(fulltoken._2.content).flatMap(_.as[SuccessContent]))
-        .leftMap(_ => ())
-      user <- EitherT(userService.lookup(content))
-    } yield user).value
+  ): Future[Either[Unit, SuccessContent]] = {
+    Future.successful(jwtToken.flatMap(_._2.content.asJson.as[SuccessContent].toTry).toEither.left.map(_ => ()))
   }
 
   private val fileUploadRoute = {
@@ -64,7 +57,7 @@ class AkkaApiRouteProvider(
                   val savingFile: Future[Long] = for {
                     userOpt <- checkClaims(jwtToken)
                     result <-
-                      if (userOpt.toOption.flatten.isDefined) {
+                      if (userOpt.toOption.isDefined) {
                         storageConfig.currentOption match {
                           case AwsS3 =>
                             val bucket = storageConfig.configs(AwsS3).asInstanceOf[S3config].bucket
@@ -114,7 +107,7 @@ class AkkaApiRouteProvider(
                 val file = for {
                   userOpt <- checkClaims(jwtToken)
                   result: HttpResponse <-
-                    if (userOpt.toOption.flatten.isDefined) {
+                    if (userOpt.toOption.isDefined) {
                       storageConfig.currentOption match {
                         case AwsS3 =>
                           val bucket = storageConfig.configs(AwsS3).asInstanceOf[S3config].bucket
@@ -173,7 +166,15 @@ class AkkaApiRouteProvider(
       extractClientIP { address =>
         interpreter.toRoute(
           UserEndpoint.login.serverLogic { request: LoginRequest =>
-            EitherT(userService.login(address.toIP.map(_.ip.toString).getOrElse(""), request.login, request.password,request.email,request.phone))
+            EitherT(
+              userService.login(
+                address.toIP.map(_.ip.toString).getOrElse(""),
+                request.login,
+                request.password,
+                request.email,
+                request.phone,
+              ),
+            )
               .bimap(LoginFailure.from(_, userConfig), LoginResponse.from(_, jwtConfig))
               .value
           },
@@ -196,22 +197,14 @@ class AkkaApiRouteProvider(
         },
         securedUserEndpoint.logout
           .serverSecurityLogic { checkClaims }
-          .serverLogic { userOpt => _ =>
-            (for {
-              user <- OptionT.fromOption[Future](userOpt).toRight(())
-              _ <- EitherT(userService.logout(user))
-            } yield ()).value
+          .serverLogic { content => _ => userService.logout(content.loginAs) },
+        securedUserEndpoint.changePassword
+          .serverSecurityLogic { checkClaims }
+          .serverLogic { content => request =>
+            EitherT(userService.updatePassword(content.loginAs, request.current, request.proposed))
+              .bimap(_ => (), _ => PasswordResetResponse("update succeed"))
+              .value
           },
-
-//        securedUserEndpoint.changePassword
-//          .serverSecurityLogic { checkClaims }
-//          .serverLogic { userOpt => request =>
-//            (for {
-//              user <- OptionT.fromOption[Future](userOpt).toRight(())
-//              _ <- EitherT(userService.updatePassword(user, request.current.toString, request.proposed.toString))
-//            } yield ()).value
-//          },
-
       ),
     )
   }

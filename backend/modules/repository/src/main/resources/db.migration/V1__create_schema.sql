@@ -58,26 +58,26 @@ ALTER TABLE "password_reset_codes"
 -- EMAILS
 CREATE TABLE "scheduled_email"
 (
-  "id"               BIGINT NOT NULL,
   "recipient"        TEXT NOT NULL,
   "subject"          TEXT NOT NULL,
   "content"          TEXT NOT NULL,
   "created_on"       TIMESTAMPTZ NOT NULL,
 );
 ALTER TABLE "scheduled_email"
-  ADD CONSTRAINT "scheduled_email_id" PRIMARY KEY ("id");
+  ADD CONSTRAINT "scheduled_email_id" PRIMARY KEY ("created_on");
+CREATE UNIQUE INDEX "scheduled_email_key" ON "scheduled_email" ("recipient");
 
 -- SMS
 CREATE TABLE "scheduled_sms"
 (
-  "id"              BIGINT NOT NULL,
   "recipient"       TEXT NOT NULL,
   "subject"         TEXT NOT NULL,
   "content"         TEXT NOT NULL,
   "created_on"       TIMESTAMPTZ NOT NULL,
 );
 ALTER TABLE "scheduled_sms"
-  ADD CONSTRAINT "scheduled_sms_id" PRIMARY KEY ("id");
+  ADD CONSTRAINT "scheduled_sms_id" PRIMARY KEY ("created_on");
+CREATE UNIQUE INDEX "scheduled_sms_key" ON "scheduled_sms" ("recipient");
 
 -- Login Attempts
 CREATE TABLE "login_attempts"
@@ -91,7 +91,7 @@ CREATE TABLE "login_attempts"
 );
 ALTER TABLE "login_attempts"
   ADD CONSTRAINT "login_attempts_id" PRIMARY KEY ("id");
-CREATE UNIQUE INDEX "login_attempts_user_id" ON "login_attempts" ("user_id");
+CREATE UNIQUE INDEX "login_attempts_request_from" ON "login_attempts" ("request_from");
 
 -- Account Balances
 CREATE TABLE "accounts"
