@@ -41,9 +41,6 @@ object UserEndpoint {
     private val securedEndpoint = endpoint
       .securityIn(jwt)
 
-    val logout: Endpoint[Try[(JwtHeader, JwtClaim, String)], Unit, Unit, Unit, Any] = securedEndpoint.delete
-      .in(UserPath)
-
     val changePassword: Endpoint[Try[
       (JwtHeader, JwtClaim, String),
     ], PasswordResetRequest, Unit, PasswordResetResponse, Any] =

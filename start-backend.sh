@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sbt "~backend/reStart"
+./bin/app.sh

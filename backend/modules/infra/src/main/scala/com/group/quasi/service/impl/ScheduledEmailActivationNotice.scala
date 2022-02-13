@@ -3,7 +3,7 @@ package com.group.quasi.service.impl
 import akka.actor.typed.ActorSystem
 import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.typed.scaladsl.ActorSource
-import akka.stream.{OverflowStrategy, QueueOfferResult}
+import akka.stream.{CompletionStrategy, OverflowStrategy, QueueOfferResult}
 import com.group.quasi.domain.infra.notification.NotificationData
 import com.group.quasi.domain.service.NotificationService
 import com.group.quasi.domain.service.NotificationService._
@@ -24,7 +24,7 @@ final class ScheduledEmailActivationNotice(
 
   private val (actor, senderSource) = ActorSource
     .actorRef[NotificationCommand](
-      completionMatcher = { case NotificationComplete => },
+      completionMatcher = { case NotificationComplete => CompletionStrategy.immediately },
       failureMatcher = { case NotificationFailure(ex) => ex },
       bufferSize = 512,
       overflowStrategy = OverflowStrategy.fail,

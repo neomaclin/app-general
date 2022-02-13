@@ -16,8 +16,6 @@ trait UserService[F[_]] {
       phone: Option[String] = None,
   ): F[Either[LoginFailure, LoginSuccess]]
 
-  def logout(loginAs: String): F[Either[Unit, Unit]]
-
   def updatePassword(loginAs: String, current: String, proposed: String): F[Either[Unit, Unit]]
 
 }

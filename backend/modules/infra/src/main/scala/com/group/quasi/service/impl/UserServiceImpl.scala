@@ -88,10 +88,6 @@ class UserServiceImpl[F[_]: MonadThrow](
     result.recover(_ => Left(users.LoginFailure(requestFrom, Instant.now(), users.MAX_LOGIN_ATTEMPTS)))
   }
 
-  override def logout(loginAs: String): F[Either[Unit, Unit]] = {
-    Applicative[F].pure(Right(()))
-  }
-
   override def updatePassword(loginAs: String, current: String, proposed: String): F[Either[Unit, Unit]] = {
     val result = for {
       userOption <- userRepo.findByLogin(loginAs)

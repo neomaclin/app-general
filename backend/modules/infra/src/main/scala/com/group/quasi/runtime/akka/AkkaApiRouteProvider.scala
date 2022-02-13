@@ -195,9 +195,6 @@ class AkkaApiRouteProvider(
         UserEndpoint.activate.serverLogic { activationKey =>
           EitherT(userService.activate(activationKey)).bimap(_.msg, _.msg).value
         },
-        securedUserEndpoint.logout
-          .serverSecurityLogic { checkClaims }
-          .serverLogic { content => _ => userService.logout(content.loginAs) },
         securedUserEndpoint.changePassword
           .serverSecurityLogic { checkClaims }
           .serverLogic { content => request =>

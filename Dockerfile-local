@@ -1,12 +1,11 @@
 #Builder
-ARG ARTIFACT_NAME="app"
-
 FROM hseeberger/scala-sbt:17.0.1_1.6.1_2.13.8 as builder1
+ARG ARTIFACT_NAME="app"
 WORKDIR /build
 COPY . ./
-RUN sbt clean scalafmtAll scalafixAll "Test / test" "IntegrationTest / test"
-RUN sbt clean universal:packageBin
-RUN unzip /app/target/universal/$ARTIFACT_NAME-*.zip -d /app/unpack && mv /app/unpack/*/* /app/unpack && rm -rf /app/unpack/$ARTIFACT_NAME-*
+RUN sbt clean scalafmtAll "Test / test"
+RUN sbt clean "Universal / packageBin"
+RUN unzip /build/target/universal/$ARTIFACT_NAME-*.zip -d /build/unpack && mv /build/unpack/*/* /build/unpack && rm -rf /build/unpack/$ARTIFACT_NAME-*
 
 
 #Main
@@ -14,15 +13,15 @@ FROM amazoncorretto:17
 RUN curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
 RUN yum install -y nodejs
 RUN npm install --global yarn
-WORKDIR /build
+WORKDIR /app
 
 COPY . ./
 
-COPY --from=builder1 /build/unpack/. /build
+COPY --from=builder1 /build/unpack/. /app
 
 RUN mkdir -p /shared
-COPY start-backend.sh /build/
+COPY start-backend.sh /app/
 #COPY start-frontend.sh /build/
 
 #ENTRYPOINT ["bash","/app/shart-backend.sh && /app/shart-frontend.sh"]
-ENTRYPOINT ["bash","/build/shart-backend.sh"]
+#ENTRYPOINT ["bash","/app/shart-backend.sh"]
