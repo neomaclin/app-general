@@ -15,7 +15,6 @@ scalafmtAll := {
   (Compile / scalafmtSbt).value
   (Compile / scalafmt).value
   (Test / scalafmt).value
-  // (IntegrationTest / scalafmt).value
 }
 
 libraryDependencies ++= tapir ++ circe ++ refined ++ jwt

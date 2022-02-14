@@ -56,9 +56,8 @@ package object auth {
       phone: Option[String],
   )
 
-  final case class LoginResponse(
-      jwtToken: String,
-  )
+  final case class LoginResponse(accessToken: String)
+
   object LoginResponse {
     def from(success: LoginSuccess, jwtConfig: JwtConfig): LoginResponse = {
       val claim = JwtClaim.apply(

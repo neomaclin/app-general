@@ -1,19 +1,23 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, computed } from 'vue'
+
+const currentPath = ref(window.location.hash)
+
+window.addEventListener('hashchange', () => {
+  currentPath.value = window.location.hash
+})
+
+// const currentView = computed(() => {
+//   const url = currentPath.value.slice(1)
+//   return routes.find(route => url.match(route.path.reg) || route.path === '/')?.component || NotFound
+// })
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <component :is="currentView" />
 </template>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

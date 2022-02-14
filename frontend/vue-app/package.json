@@ -10,6 +10,7 @@
     "axios": "^0.24.0",
     "bootstrap": "^5.1.3",
     "rxjs": "^7.5.2",
+    "ts-easy-jwt-client": "^1.1.1",
     "vue": "^3.2.25",
     "vue-axios": "^3.4.0",
     "vue-router": "^4.0.12",
