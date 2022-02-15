@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,

@@ -20,6 +20,7 @@ package object users {
       email: String,
       password: String,
       phone: Option[String],
+      nodeTime: Long,
       active: Boolean,
   )
 

@@ -140,6 +140,6 @@ object Dependencies {
   )
 
   val flyway = Seq(
-    "org.flywaydb" % "flyway-core" % "8.4.3"
+    "org.flywaydb" % "flyway-core" % "8.4.4"
   )
 }

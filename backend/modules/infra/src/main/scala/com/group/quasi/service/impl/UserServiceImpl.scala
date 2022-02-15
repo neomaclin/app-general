@@ -37,7 +37,7 @@ class UserServiceImpl[F[_]: MonadThrow](
           activationKey <- keyGenerator.nextId().pure[F]
           activationKeyValidUntil <- Instant.now().plus(30, ChronoUnit.MINUTES).pure[F]
           _ <- userRepo.insert(
-            User(id = userId, login = user, password = password, email = email, phone = phone, active = false),
+            User(id = userId, login = user, password = password, email = email, phone = phone, nodeTime = Instant.now().toEpochMilli, active = false),
           )
           _ <- activationKeyRepository.insert(activationKey, userId, activationKeyValidUntil)
           _ <- notificationSender.send(NotificationData.apply(email, EmailTemplates.activateTemplate()))

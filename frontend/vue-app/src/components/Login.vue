@@ -4,19 +4,19 @@
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
-      <input type="login" v-model="requestForm.login" class="form-control" id="floatingInput" placeholder="">
+      <input type="login" v-model="requestForm.login" class="form-control" id="floatingInput">
       <label for="floatingInput">Login Id</label>
     </div>
     <div class="form-floating">
-      <input type="email" v-model="requestForm.email" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <input type="email" v-model="requestForm.email" class="form-control" id="floatingInput" >
       <label for="floatingInput">Email address</label>
     </div>
     <div class="form-floating">
-      <input type="phone" v-model="requestForm.phone" class="form-control" id="floatingInput" placeholder="">
+      <input type="phone" v-model="requestForm.phone" class="form-control" id="floatingInput" >
       <label for="floatingInput">Phone Number</label>
     </div>
     <div class="form-floating">
-      <input type="password" v-model="requestForm.password" class="form-control" id="floatingPassword" placeholder="Password">
+      <input type="password" v-model="requestForm.password" class="form-control" id="floatingPassword">
       <label for="floatingPassword">Password</label>
     </div>
 
@@ -32,18 +32,18 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { userService } from '../services/UserService';
+// import { userService } from '../services/UserService';
 import { LoginRequest } from '../types/auth.module';
 
 const remember = ref(false)
 
 const requestForm = reactive<LoginRequest>({
   login: "", 
-  password:""
+  password: ""
 })
 
 function submitRequest() {
-  userService.login(requestForm)
+  
 }
 
 </script>

@@ -6,9 +6,10 @@ CREATE TABLE "users"
   "email"           TEXT        NOT NULL,
   "alias_lowercase" TEXT        NOT NULL,
   "email_lowercase" TEXT        NOT NULL,
-  "phone"           TEXT        NULL
+  "phone"           TEXT        NULL,
   "password"        TEXT        NOT NULL,
-  "created_on"      TIMESTAMPTZ NOT NULL
+  "node_creation_epoch"      BIGINT      NOT Null,
+  "created_on"      TIMESTAMPTZ NOT NULL default now(),
   "active"       BOOLEAN NOT NULL
 );
 ALTER TABLE "users"
@@ -25,14 +26,16 @@ CREATE TABLE "user_profiles"
   "first_name"          TEXT        NOT NULL,
   "aka_name"            TEXT        NOT NULL,
   "preferred_contact"   TEXT        NOT NULL,
-  "gender"              TEXT        NULL
+  "gender"              TEXT        NULL,
   "social_network_accounts"        TEXT        NOT NULL,
   "memo"        TEXT        NOT NULL,
-  "created_on"      TIMESTAMPTZ NOT NULL
-  "updated_on"      TIMESTAMPTZ NOT NULL
+  "created_on"      TIMESTAMPTZ NOT NULL,
+  "node_creation_epoch"      BIGINT      NOT Null,
+  "updated_on"      TIMESTAMPTZ NOT NULL,
+    "node_modificatin_epoch"      BIGINT      NOT Null
 );
 ALTER TABLE "user_profiles"
-  ADD CONSTRAINT "profiles_id" PRIMARY KEY ("id");
+  ADD CONSTRAINT "user_profiles_id" PRIMARY KEY ("id");
 
 
 -- Activation Keys
@@ -40,7 +43,7 @@ CREATE TABLE "activation_keys"
 (
   "key"         TEXT        NOT NULL,
   "user_id"     BIGINT        NOT NULL,
-  "valid_until" TIMESTAMPTZ NOT NULL
+  "valid_until" BIGINT NOT NULL
 );
 ALTER TABLE "activation_keys"
   ADD CONSTRAINT "activation_keys_id" PRIMARY KEY ("key","user_id");
@@ -49,8 +52,8 @@ ALTER TABLE "activation_keys"
 CREATE TABLE "password_reset_codes"
 (
   "code"          TEXT        NOT NULL,
-  "user_id"       BIGINT        NOT NULL,
-  "valid_until"   TIMESTAMPTZ NOT NULL
+  "user_id"       BIGINT       NOT NULL,
+  "valid_until"   BIGINT       NOT NULL
 );
 ALTER TABLE "password_reset_codes"
   ADD CONSTRAINT "password_reset_codes_id" PRIMARY KEY ("code","user_id");
