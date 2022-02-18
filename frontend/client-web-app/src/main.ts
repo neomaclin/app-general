@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router' // <---
-import store from './store'
+import {key, store} from './store'
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -15,7 +15,7 @@ const authstore = store(authservice)
 
 createApp(App)
    .use(router)
-   //.use(store)
+   .use(authstore, key)
    .use(VueAxios, axios)
    .component("font-awesome-icon", FontAwesomeIcon)
    .provide('axios', axios)
