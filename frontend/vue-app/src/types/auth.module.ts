@@ -1,3 +1,10 @@
+ 
+export interface User{
+    login: string;
+    email: string;
+    role: string;
+}
+
 export interface RegisterRequest {
     login: string;
     email: string;

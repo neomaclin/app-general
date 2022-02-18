@@ -14,14 +14,14 @@ final class ActivationKeyRepository(implicit override val session: SlickSession)
 
   def insert(key: String, userId: Long, validUntil: Instant): Future[Int] = {
     session.db.run(
-      sqlu"""INSERT INTO activation_keys (key, user_id, valid_until) VALUES($key, $userId ,${validUntil.toEpochMilli})""",
+      sqlu"""INSERT INTO activation_keys (key, user_id, valid_until) VALUES ($key, $userId ,${validUntil.toEpochMilli})""",
     )
   }
   def delete(key: String, userId: Long): Future[Int] = {
     session.db.run(sqlu"""Delete from activation_keys WHERE key = $key user_id = $userId""")
   }
 
-  override def findByKey(key: String): Future[Option[Long]] = {
-    session.db.run(sql"select user_id from activation_keys WHERE key = $key".as[Long].headOption)
+  override def findByKey(key: String, now: Long): Future[Option[Long]] = {
+    session.db.run(sql"select user_id from activation_keys WHERE valid_until > $now and key = $key".as[Long].headOption)
   }
 }

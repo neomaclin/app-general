@@ -1,50 +1,76 @@
 <template>
-    <form  @submit.prevent>
-    <img class="mb-4" alt="" width="72" height="57">
-    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
-    <div class="form-floating">
-      <input type="login" v-model="requestForm.login" class="form-control" id="floatingInput">
-      <label for="floatingInput">Login Id</label>
+  <div class="col-md-12">
+    <div class="card card-container">
+      <img
+        id="profile-img"
+        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+        class="profile-img-card"
+      />
+      <Form @submit="onSubmit" :validation-schema="schema">
+        <div class="form-group">
+          <label for="login">Username</label>
+          <Field name="login" type="text" class="form-control" />
+          <ErrorMessage name="login" class="error-feedback" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <Field name="password" type="password" class="form-control" />
+          <ErrorMessage name="password" class="error-feedback" />
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" :disabled="isSubmitting">
+            <span
+              v-show="isSubmitting"
+              class="spinner-border spinner-border-sm"
+            ></span>
+            <span>Login</span>
+          </button>
+        </div>
+        <div class="form-group">
+          <div v-if="message" class="alert alert-danger" role="alert">
+            {{ message }}
+          </div>
+        </div>
+      </Form>
     </div>
-    <div class="form-floating">
-      <input type="email" v-model="requestForm.email" class="form-control" id="floatingInput" >
-      <label for="floatingInput">Email address</label>
-    </div>
-    <div class="form-floating">
-      <input type="phone" v-model="requestForm.phone" class="form-control" id="floatingInput" >
-      <label for="floatingInput">Phone Number</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" v-model="requestForm.password" class="form-control" id="floatingPassword">
-      <label for="floatingPassword">Password</label>
-    </div>
-
-    <div class="checkbox mb-3">
-      <label>
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
-    </div>
-    <button @click.once="submitRequest" class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-    <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-// import { userService } from '../services/UserService';
-import { LoginRequest } from '../types/auth.module';
+import { useForm } from 'vee-validate';
 
-const remember = ref(false)
+import {string, object} from "yup";
 
-const requestForm = reactive<LoginRequest>({
-  login: "", 
-  password: ""
-})
+import { reactive, ref, inject } from 'vue'
+import AuthService from '../services/auth.service';
 
-function submitRequest() {
-  
-}
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+
+
+const store = useStore()
+const router = useRouter()
+// const successful = ref(false)
+const message = ref("")
+
+const schema = object({
+      login: string().required("You can login with your username/email/phone-number."),
+      password: string().required("Password is required!"),
+    });
+
+const { handleSubmit, isSubmitting } =  useForm({
+      validationSchema: schema,
+    });
+
+
+const onSubmit = handleSubmit((values, { resetForm }) => {
+    store.dispatch('login', {
+       login: values.login,
+       email: values.login,
+       password: values.password!,
+       phone: values.login,
+    }).then( ()=> router.push({ name: 'Pending' }))
+  });
 
 </script>
 <style scoped>

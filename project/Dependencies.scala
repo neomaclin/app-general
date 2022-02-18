@@ -7,7 +7,7 @@ object Dependencies {
     val akka = "2.6.18"
     val akkaHttp = "10.2.7"
     val cats = "2.7.0"
-    val distage = "1.0.9"
+    val distage = "1.0.10"
     val tapir = "0.19.3"
     val circe = "0.14.1"
     val doobie = "1.0.0-RC1"
@@ -124,8 +124,6 @@ object Dependencies {
     "com.github.jwt-scala" %% "jwt-circe" % versions.jwt,
   )
 
-
-
   val slickPg = Seq(
     "com.github.tminglei" %% "slick-pg" % "0.20.2",
     "com.github.tminglei" %% "slick-pg_circe-json" % "0.20.2",
@@ -140,6 +138,6 @@ object Dependencies {
   )
 
   val flyway = Seq(
-    "org.flywaydb" % "flyway-core" % "8.4.4"
+    "org.flywaydb" % "flyway-core" % "8.5.0"
   )
 }

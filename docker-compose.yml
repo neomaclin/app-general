@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   app:
     build:
@@ -16,16 +17,43 @@ services:
       SQL_DBNAME: 'app'
       SQL_HOST: 'db'
       SQL_PORT: 5432
-      SMTP_USERNAME: 'postgres'
-      SMTP_PASSWORD: 'admin'
-      SMTP_HOST: 'smtp'
+      SMTP_USERNAME: 'admin@quasi-g.com'
+      SMTP_PASSWORD: ''
+      SMTP_HOST: 'mail.privateemail.com'
       SMTP_SSL_CONNECTION: false
       SMTP_VERIFY_SSL_CERTIFICATE: false
       SMTP_PORT: 587
+      SMTP_ENCODING: 'UTF-8'
+      SMTP_FROM: "admin@quasi-g.com"
+      NOTIFICATION_BATCH_SIZE: 10
+      NOTIFICATION_SEND_INTERVAL: "1 second"
       MQ_HOST: mq
       MQ_PORT: 5672
       API_HOST: '0.0.0.0'
       API_PORT: 8080
+#  proxy:
+#    image: 'nginx'
+#    ports:
+#      - '80:80'
+#      - '443:443'
+#   volumes:
+#      - conf/etc/nginx
+#      - conf/etc/ssl/private
+  proxy:
+    image: 'nginx'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - web-root:/var/www/html
+      - ./conf/nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - nodejs
+    networks:
+      - app-network
   db:
     image: 'postgres'
     ports:
@@ -42,5 +70,27 @@ services:
     image: 'rabbitmq:3.9'
     ports:
       - '25672:5672'
+  certbot:
+    image: certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+#    depends_on:
+#      - proxy
+    command: certonly --webroot --webroot-path=/var/www/html --email admin@quasi-g.com --agree-tos --no-eff-email --staging -d general-app.com  -d www.general-app.com
 
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: /home/sammy/node_project/views/
+#      o: bind
 
+networks:
+  app-network:
+    driver: bridge

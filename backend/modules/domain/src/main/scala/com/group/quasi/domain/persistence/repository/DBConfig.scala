@@ -5,6 +5,5 @@ final case class DBConfig(
     password: String,
     url: String,
     profile: String,
-    connectThreadPoolSize: Int,
     migrateOnStart: Boolean,
 )

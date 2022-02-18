@@ -41,7 +41,11 @@ package object users {
 
   final case class ActivationSuccess(msg: String)
 
-  final case class LoginFailure(requestFrom: String, attemptedAt: Instant, attemptCount: Int)
+  sealed trait LoginFailure
+
+  final case class MaxAttemptReached(requestFrom: String) extends LoginFailure
+
+  final case class LoginAttemptFailure(requestFrom: String, attemptedAt: Instant, attemptCount: Int) extends LoginFailure
 
   final case class SuccessContent(loginAs: String, email: String, role: Role)
 

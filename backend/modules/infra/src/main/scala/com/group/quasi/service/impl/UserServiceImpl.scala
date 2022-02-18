@@ -1,5 +1,6 @@
 package com.group.quasi.service.impl
 
+import cats.data.OptionT
 import cats.{Applicative, MonadThrow}
 import com.group.quasi.domain.infra.notification.{NotificationData, NotificationSender}
 import com.group.quasi.domain.model.roles.Member
@@ -10,11 +11,12 @@ import com.group.quasi.domain.service.UserService
 import com.group.quasi.notification.email.EmailTemplates
 import com.softwaremill.id.IdGenerator
 import com.softwaremill.id.pretty.StringIdGenerator
+import izumi.functional.mono.Clock
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-class UserServiceImpl[F[_]: MonadThrow](
+class UserServiceImpl[F[_]: MonadThrow: Clock](
     userRepo: UserRepository[F],
     activationKeyRepository: ActivationKeyRepository[F],
     loginAttemptRepository: LoginAttemptRepository[F],
@@ -29,72 +31,70 @@ class UserServiceImpl[F[_]: MonadThrow](
       email: String,
       phone: Option[String],
   ): F[Either[Unit, String]] = {
-
-    val result: F[Either[Unit, String]] =
       MonadThrow[F].ifM(userRepo.findByLoginOrEmail(user, email).map(_.isEmpty))(
         for {
           userId <- idGenerator.nextId().pure[F]
           activationKey <- keyGenerator.nextId().pure[F]
-          activationKeyValidUntil <- Instant.now().plus(30, ChronoUnit.MINUTES).pure[F]
+          activationKeyValidUntil <- Clock[F].now().map(_.plus(30, ChronoUnit.MINUTES)).map(_.toInstant)
+          now <- Clock[F].now().map(_.toInstant.toEpochMilli)
           _ <- userRepo.insert(
-            User(id = userId, login = user, password = password, email = email, phone = phone, nodeTime = Instant.now().toEpochMilli, active = false),
+            User(id = userId, login = user, password = password, email = email, phone = phone, nodeTime = now, active = false),
           )
           _ <- activationKeyRepository.insert(activationKey, userId, activationKeyValidUntil)
           _ <- notificationSender.send(NotificationData.apply(email, EmailTemplates.activateTemplate()))
         } yield Right(activationKey),
-        (Left(()): Either[Unit, String]).pure[F],
+        Applicative[F].pure[Either[Unit, String]](Left(())),
       )
-    result.recover(_ => Left(()))
   }
 
   override def activate(key: String): F[Either[users.ActivationFailure, users.ActivationSuccess]] = {
-    val result = for {
-      users <- activationKeyRepository.findByKey(key)
-      userOption <- users.traverse(userId => userRepo.findById(userId))
-      _ <- userOption.flatten.traverse(user => userRepo.activate(user.id))
-      _ <- userOption.flatten.traverse(user => activationKeyRepository.delete(key, user.id))
+    (for {
+      now <- OptionT.liftF(Clock[F].now().map(_.toInstant.toEpochMilli))
+      userId <- OptionT(activationKeyRepository.findByKey(key,now))
+      _ <- OptionT.liftF(userRepo.activate(userId))
+      _ <- OptionT.liftF(activationKeyRepository.delete(key, userId))
+      user <- OptionT(userRepo.findById(userId))
     } yield {
-      userOption.flatten
-        .map(user => ActivationSuccess(s"Registration for ${user.login} is now activated"))
-        .toRight(ActivationFailure(s"Failed to activate for key: $key"))
-    }
-    result.recover(_ => Left(ActivationFailure(s"Failed to activate for key: $key")))
+      ActivationSuccess(s"Registration for ${user.login} is now activated")
+    }).toRight(ActivationFailure(s"Failed to activate for key: $key")).value
   }
+
+//  override def deActivate(key: String): F[Either[users.ActivationFailure, users.ActivationSuccess]] = {
+//    (for {
+//      now <- OptionT.liftF(Clock[F].now().map(_.toInstant.toEpochMilli))
+//      userId <- OptionT(activationKeyRepository.findByKey(key,now))
+//      _ <- OptionT.liftF(userRepo.activate(userId))
+//      _ <- OptionT.liftF(activationKeyRepository.delete(key, userId))
+//      user <- OptionT(userRepo.findById(userId))
+//    } yield {
+//      ActivationSuccess(s"Registration for ${user.login} is now activated")
+//    }).toRight(ActivationFailure(s"Failed to activate for key: $key")).value
+//  }
 
   override def login(
       requestFrom: String,
-      user: String,
+      user: Option[String],
       password: String,
       email: Option[String],
       phoneNumber: Option[String],
   ): F[Either[users.LoginFailure, users.LoginSuccess]] = {
-    val result = for {
-      userOption1 <- userRepo.findByLogin(user)
-      userOption2 <- if (userOption1.isEmpty) userRepo.findByEmail(email.getOrElse("")) else None.pure[F]
-      userOption3 <- if (userOption2.isEmpty) userRepo.findByPhoneNumber(phoneNumber.getOrElse("")) else None.pure[F]
-      _ <- loginAttemptRepository.updateCount(requestFrom)
-      countOption <- loginAttemptRepository.getCount(requestFrom)
-    } yield {
-      val userOption = userOption1.orElse(userOption2).orElse(userOption3)
-      val counts = countOption.getOrElse(1)
-      if (userOption.isEmpty && counts >= users.MAX_LOGIN_ATTEMPTS) {
-        Left(users.LoginFailure(requestFrom, Instant.now(), counts))
-      } else
-        userOption
-          .filter(_.password === password)
-          .map(user => users.LoginSuccess(Instant.now(), users.SuccessContent(user.login, user.email, Member)))
-          .toRight(users.LoginFailure(requestFrom, Instant.now(), counts))
-    }
-    result.recover(_ => Left(users.LoginFailure(requestFrom, Instant.now(), users.MAX_LOGIN_ATTEMPTS)))
+     OptionT(loginAttemptRepository.updateCount(requestFrom))
+      .filter(_ < users.MAX_LOGIN_ATTEMPTS)
+      .foldF(Applicative[F].pure[Either[users.LoginFailure, users.LoginSuccess]](Left(users.MaxAttemptReached(requestFrom))))
+      { count => (for {
+        user <- OptionT(user.flatTraverse(userRepo.findByLogin))
+          .orElse(OptionT(email.flatTraverse(userRepo.findByEmail)))
+          .orElse(OptionT(phoneNumber.flatTraverse(userRepo.findByPhoneNumber))) if user.password === password
+        _   <-  OptionT.liftF(loginAttemptRepository.resetCount(requestFrom))
+      } yield {
+        users.LoginSuccess(Instant.now(), users.SuccessContent(user.login, user.email, Member))
+      }).toRight[users.LoginFailure](users.LoginAttemptFailure(requestFrom, Instant.now(), count)).value }
   }
 
   override def updatePassword(loginAs: String, current: String, proposed: String): F[Either[Unit, Unit]] = {
-    val result = for {
-      userOption <- userRepo.findByLogin(loginAs)
-      _ <- userOption.filter(_.password === current).traverse(user => userRepo.updatePassword(user.id, proposed))
-    } yield {
-      Right(()): Either[Unit, Unit]
-    }
-    result.recover(_ => Left(()))
+    (for {
+      user <- OptionT(userRepo.findByLogin(loginAs)) if user.password === current
+      _ <- OptionT.liftF(userRepo.updatePassword(user.id, proposed))
+    } yield ()).value.map(_.toRight(Left()))
   }
 }

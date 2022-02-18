@@ -29,9 +29,9 @@ CREATE TABLE "user_profiles"
   "gender"              TEXT        NULL,
   "social_network_accounts"        TEXT        NOT NULL,
   "memo"        TEXT        NOT NULL,
-  "created_on"      TIMESTAMPTZ NOT NULL,
+  "created_on"      TIMESTAMPTZ NOT NULL default now(),
   "node_creation_epoch"      BIGINT      NOT Null,
-  "updated_on"      TIMESTAMPTZ NOT NULL,
+  "updated_on"      TIMESTAMPTZ NOT NULL default now(),
     "node_modificatin_epoch"      BIGINT      NOT Null
 );
 ALTER TABLE "user_profiles"

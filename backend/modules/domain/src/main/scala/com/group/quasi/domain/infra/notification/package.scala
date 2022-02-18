@@ -7,7 +7,13 @@ package object notification {
   sealed trait NotificationConfig
   case object SMTP extends NotificationOption
   case object AwsSNS extends NotificationOption
-
+  object NotificationOption {
+    def unsafe(value: String): NotificationOption = value.toLowerCase match {
+      case SMTP.toString.toLowerCase => SMTP
+      case AwsSNS.toString.toLowerCase  => AwsSNS
+      case _ => throw new IllegalArgumentException(s"$value is not supported NotificationOption type")
+    }
+  }
   final case class NotificationConfigs(
       currentOption: NotificationOption,
       configs: Map[NotificationOption, NotificationConfig],

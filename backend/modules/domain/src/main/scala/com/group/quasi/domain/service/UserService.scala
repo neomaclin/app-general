@@ -10,7 +10,7 @@ trait UserService[F[_]] {
 
   def login(
       requestFrom: String,
-      loginAs: String,
+      loginAs: Option[String],
       password: String,
       email: Option[String] = None,
       phone: Option[String] = None,

@@ -50,7 +50,7 @@ package object auth {
   )
 
   final case class LoginRequest(
-      login: LoginAlias,
+      login: Option[LoginAlias],
       password: Password,
       email: Option[String],
       phone: Option[String],
@@ -74,8 +74,9 @@ package object auth {
   }
   final case class LoginFailure(attemptCounts: Int, accountLocked: Boolean)
   object LoginFailure {
-    def from(failure: users.LoginFailure, config: UserConfig): LoginFailure = {
-      LoginFailure(failure.attemptCount, failure.attemptCount >= config.loginMaxAttempts)
+    def from(failure: users.LoginFailure, config: UserConfig): LoginFailure = failure match {
+      case users.MaxAttemptReached(_) => LoginFailure(config.loginMaxAttempts, accountLocked = true)
+      case users.LoginAttemptFailure(_,_,attemptCount) => LoginFailure(attemptCount, accountLocked = false)
     }
   }
   final case class PasswordResetRequest(current: Password, proposed: Password)
@@ -85,7 +86,6 @@ package object auth {
   final case class JwtConfig(
       publicKey: PublicKey,
       privateKey: PrivateKey,
-      secretKey: String,
       algo: JwtAsymmetricAlgorithm = JwtAlgorithm.Ed25519,
   )
 
