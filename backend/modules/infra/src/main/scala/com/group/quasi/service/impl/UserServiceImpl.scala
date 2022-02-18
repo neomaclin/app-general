@@ -38,7 +38,7 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
           activationKeyValidUntil <- Clock[F].now().map(_.plus(30, ChronoUnit.MINUTES)).map(_.toInstant)
           now <- Clock[F].now().map(_.toInstant.toEpochMilli)
           _ <- userRepo.insert(
-            User(id = userId, login = user, password = password, email = email, phone = phone, nodeTime = now, active = false),
+            User(id = userId, login = user, password = password, email = email, phone = phone.filter(_.nonEmpty), nodeTime = now, active = false),
           )
           _ <- activationKeyRepository.insert(activationKey, userId, activationKeyValidUntil)
           _ <- notificationSender.send(NotificationData.apply(email, EmailTemplates.activateTemplate()))
@@ -82,9 +82,9 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
       .filter(_ < users.MAX_LOGIN_ATTEMPTS)
       .foldF(Applicative[F].pure[Either[users.LoginFailure, users.LoginSuccess]](Left(users.MaxAttemptReached(requestFrom))))
       { count => (for {
-        user <- OptionT(user.flatTraverse(userRepo.findByLogin))
-          .orElse(OptionT(email.flatTraverse(userRepo.findByEmail)))
-          .orElse(OptionT(phoneNumber.flatTraverse(userRepo.findByPhoneNumber))) if user.password === password
+        user <- OptionT(user.map(_.trim).filter(_.nonEmpty).flatTraverse(userRepo.findByLogin))
+          .orElse(OptionT(email.map(_.trim).filter(_.nonEmpty).flatTraverse(userRepo.findByEmail)))
+          .orElse(OptionT(phoneNumber.map(_.trim).filter(_.nonEmpty).flatTraverse(userRepo.findByPhoneNumber))) if user.password === password
         _   <-  OptionT.liftF(loginAttemptRepository.resetCount(requestFrom))
       } yield {
         users.LoginSuccess(Instant.now(), users.SuccessContent(user.login, user.email, Member))

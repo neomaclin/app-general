@@ -9,19 +9,19 @@ export interface RegisterRequest {
     login: string;
     email: string;
     password : string
-    phone?: string;
+    phone: string | null;
   }
   
 export interface RegisterResponse{
     activationKey: string;
     keyValidDuration: string;
-
 }
+
 export interface LoginRequest {
-    login: string;
-    email?: string;
+    login: string | null;
+    email: string | null;
     password : string
-    phone?: string;
+    phone: string | null;
 }
 
 export interface LoginResponse {
