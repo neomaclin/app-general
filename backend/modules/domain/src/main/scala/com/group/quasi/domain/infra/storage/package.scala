@@ -11,4 +11,12 @@ package object storage {
   final case class S3config(bucket: String) extends StorageConfig
   final case class LocalStorageConfig(path: String) extends StorageConfig
   final case class StorageConfigs(currentOption: StorageOption, configs: Map[StorageOption, StorageConfig])
+  object StorageOption {
+    def unsafe(value: String): StorageOption = value.toLowerCase match {
+      case "local" => LocalStorage
+      case "ftp" => FTP
+      case "awss3" => AwsS3
+      case _ => throw new IllegalArgumentException(s"$value is not supported StorageOption type")
+    }
+  }
 }

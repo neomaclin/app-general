@@ -9,8 +9,8 @@ package object notification {
   case object AwsSNS extends NotificationOption
   object NotificationOption {
     def unsafe(value: String): NotificationOption = value.toLowerCase match {
-      case SMTP.toString.toLowerCase => SMTP
-      case AwsSNS.toString.toLowerCase  => AwsSNS
+      case "smtp" => SMTP
+      case "awssns" => AwsSNS
       case _ => throw new IllegalArgumentException(s"$value is not supported NotificationOption type")
     }
   }
@@ -47,8 +47,8 @@ package object notification {
 
   final case class SubjectContent(subject: String, content: String)
 
-  object NotificationData {
-    def apply(recipient: String, subjectContent: SubjectContent): NotificationData = {
+  object NotificationDataBuilder {
+    def from(recipient: String, subjectContent: SubjectContent): NotificationData = {
       NotificationData(recipient, subjectContent.subject, subjectContent.content)
     }
   }

@@ -13,5 +13,5 @@ trait UserRepository[F[_]] {
   def updateLogin(userId: Long, newLogin: String): F[Int]
   def updateEmail(userId: Long, newEmail: String): F[Int]
   def activate(userId: Long): F[Int]
-  def deActivate(userId: Long): F[Int]
+  //def deActivate(userId: Long): F[Int]
 }

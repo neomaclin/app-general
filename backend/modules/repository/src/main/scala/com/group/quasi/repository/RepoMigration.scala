@@ -1,16 +1,18 @@
 package com.group.quasi.repository
 
-import akka.actor.typed.ActorSystem
+
+
+import akka.actor.ActorSystem
 import akka.stream.alpakka.slick.scaladsl.SlickSession
 import com.group.quasi.domain.persistence.repository.DBConfig
 import org.flywaydb.core.Flyway
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-class RepoMigration(config: DBConfig)(implicit override val session: SlickSession, system: ActorSystem[Nothing])
+class RepoMigration(config: DBConfig)(implicit override val session: SlickSession, system: ActorSystem)
     extends SlickRepository {
   import PostgresProfile.api._
-  implicit val ec: ExecutionContextExecutor = system.executionContext
+  implicit val ec: ExecutionContextExecutor = system.dispatcher
 
   def connectAndMigrate(): Future[Unit] = {
     for {
@@ -22,7 +24,7 @@ class RepoMigration(config: DBConfig)(implicit override val session: SlickSessio
   private val flyway = {
     Flyway
       .configure()
-      .dataSource(config.url, config.username, config.password.value)
+      .dataSource(config.url, config.username, config.password)
       .load()
   }
 

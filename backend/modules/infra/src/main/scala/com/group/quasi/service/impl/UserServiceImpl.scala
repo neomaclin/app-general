@@ -2,12 +2,12 @@ package com.group.quasi.service.impl
 
 import cats.data.OptionT
 import cats.{Applicative, MonadThrow}
-import com.group.quasi.domain.infra.notification.{NotificationData, NotificationSender}
+import com.group.quasi.domain.infra.notification.NotificationDataBuilder
 import com.group.quasi.domain.model.roles.Member
 import com.group.quasi.domain.model.users
 import com.group.quasi.domain.model.users.{ActivationFailure, ActivationSuccess, User}
 import com.group.quasi.domain.persistence.operation.{ActivationKeyRepository, LoginAttemptRepository, UserRepository}
-import com.group.quasi.domain.service.UserService
+import com.group.quasi.domain.service.{NotificationService, UserService}
 import com.group.quasi.notification.email.EmailTemplates
 import com.softwaremill.id.IdGenerator
 import com.softwaremill.id.pretty.StringIdGenerator
@@ -15,6 +15,7 @@ import izumi.functional.mono.Clock
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import scala.util.control.NonFatal
 
 class UserServiceImpl[F[_]: MonadThrow: Clock](
     userRepo: UserRepository[F],
@@ -22,7 +23,7 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
     loginAttemptRepository: LoginAttemptRepository[F],
     keyGenerator: StringIdGenerator,
     idGenerator: IdGenerator,
-    notificationSender: NotificationSender[F],
+    notificationService: NotificationService[F],
 ) extends UserService[F] {
   import cats.implicits._
   override def register(
@@ -30,9 +31,9 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
       password: String,
       email: String,
       phone: Option[String],
-  ): F[Either[Unit, String]] = {
-      MonadThrow[F].ifM(userRepo.findByLoginOrEmail(user, email).map(_.isEmpty))(
-        for {
+  ): F[Either[Throwable, String]] = {
+      MonadThrow[F].ifM(userRepo.findByLoginOrEmail(user, email).map( result => result.isEmpty))(
+        (for {
           userId <- idGenerator.nextId().pure[F]
           activationKey <- keyGenerator.nextId().pure[F]
           activationKeyValidUntil <- Clock[F].now().map(_.plus(30, ChronoUnit.MINUTES)).map(_.toInstant)
@@ -41,9 +42,11 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
             User(id = userId, login = user, password = password, email = email, phone = phone.filter(_.nonEmpty), nodeTime = now, active = false),
           )
           _ <- activationKeyRepository.insert(activationKey, userId, activationKeyValidUntil)
-          _ <- notificationSender.send(NotificationData.apply(email, EmailTemplates.activateTemplate()))
-        } yield Right(activationKey),
-        Applicative[F].pure[Either[Unit, String]](Left(())),
+          _ <- notificationService.send(NotificationDataBuilder.from(email, EmailTemplates.activateTemplate("Activation Key",activationKey)))
+        } yield Right(activationKey):Either[Throwable, String]).recover{
+          case NonFatal(e) => Left(e)
+        },
+        Applicative[F].pure[Either[Throwable, String]](Left(new RuntimeException("User already existed.") )),
       )
   }
 
@@ -95,6 +98,6 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
     (for {
       user <- OptionT(userRepo.findByLogin(loginAs)) if user.password === current
       _ <- OptionT.liftF(userRepo.updatePassword(user.id, proposed))
-    } yield ()).value.map(_.toRight(Left()))
+    } yield ()).value.map(_.toRight(Left(())))
   }
 }

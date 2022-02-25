@@ -12,7 +12,7 @@ import scala.concurrent.Future
 
 class RepoModule extends ModuleDef {
   make[SlickSession].from { (config: DBConfig) =>
-    SlickSession.forConfig(config.profile)
+    SlickSession.forConfig("persistence." + config.profile)
   }
   make[operation.UserRepository[Future]].from[UserRepository]
   make[operation.LoginAttemptRepository[Future]].from[LoginAttemptRepository]

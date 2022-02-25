@@ -33,11 +33,10 @@ final class ScheduledEmailActivationNotice(
 
   senderSource
     .collectType[SendBatch.type]
-    .mapAsync(2)(_ => emailRepository.findLatestBatch())
+    .flatMapConcat(_ => Source.future(emailRepository.findLatestBatch()))
     .flatMapConcat(Source(_))
-    .mapAsync(2)(emailSender.send)
-    .sliding(512)
-    .mapAsync(2)(emailRepository.removeSent)
+    .mapAsync(1)(emailSender.send)
+    .mapAsync(1)(emailRepository.removeSent)
     .runWith(Sink.onComplete {
       case Success(value) => ()
       case Failure(e)     => ()
@@ -46,7 +45,7 @@ final class ScheduledEmailActivationNotice(
   private val insertQueue =
     Source
       .queue[NotificationData](512)
-      .mapAsync(4)(emailRepository.insert)
+      .mapAsync(1)(emailRepository.insert)
       .to(Sink.ignore)
       .run()
 

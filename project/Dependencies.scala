@@ -1,4 +1,4 @@
-import sbt._
+import sbt.{ExclusionRule, _}
 
 object Dependencies {
   object versions {
@@ -12,7 +12,7 @@ object Dependencies {
     val circe = "0.14.1"
     val doobie = "1.0.0-RC1"
     val configSupport = "0.17.1"
-    val bytebuddy = "1.12.7"
+    val bytebuddy = "1.12.8"
     val scalaTest = "3.2.10"
     val scalaMock = "5.2.0"
     val mockito = "1.17.0"
@@ -21,12 +21,16 @@ object Dependencies {
     val refined = "0.9.28"
     val alpakka = "3.0.4"
     val jwt = "9.0.3"
+    val log4j = "2.17.1"
   }
 
   val akka = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % versions.akka,
-    "com.typesafe.akka" %% "akka-stream-typed" % versions.akka,
   )
+
+  val akkaStream = Seq(
+    "com.typesafe.akka" %% "akka-stream-typed" % versions.akka,
+  ) ++ akka
 
   val akkaHttp = Seq(
     "com.typesafe.akka" %% "akka-http" % versions.akkaHttp,
@@ -89,6 +93,7 @@ object Dependencies {
 
   val emailDependencies = Seq(
     "com.sun.mail" % "javax.mail" % "1.6.2" exclude ("javax.activation", "activation"),
+    "com.sun.activation" % "javax.activation" % "1.2.0"
   )
 
   val phoneDependencies = Seq(
@@ -121,7 +126,11 @@ object Dependencies {
   )
 
   val jwt = Seq(
-    "com.github.jwt-scala" %% "jwt-circe" % versions.jwt,
+    "com.github.jwt-scala" %% "jwt-circe" % versions.jwt excludeAll ExclusionRule(
+      organization = "org.bouncycastle",
+      ),
+    "org.bouncycastle" % "bcprov-jdk15on" % "1.70",
+    "org.bouncycastle" % "bcpkix-jdk15on" % "1.70"
   )
 
   val slickPg = Seq(
@@ -139,5 +148,11 @@ object Dependencies {
 
   val flyway = Seq(
     "org.flywaydb" % "flyway-core" % "8.5.0"
+  )
+
+  val logger = Seq(
+    "org.apache.logging.log4j" % "log4j-api" % versions.log4j,
+    "org.apache.logging.log4j" % "log4j-core" % versions.log4j,
+    "org.apache.logging.log4j" % "log4j-slf4j-impl" % versions.log4j,
   )
 }

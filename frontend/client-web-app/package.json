@@ -20,6 +20,7 @@
     "vue-axios": "^3.4.1",
     "vue-router": "^4.0.12",
     "vue-rx": "^6.2.0",
+    "vue-webrtc": "^3.0.0",
     "vuex": "^4.0.2",
     "vuex-class": "^0.3.2",
     "vuex-module-decorators": "^2.0.0",

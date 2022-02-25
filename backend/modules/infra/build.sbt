@@ -3,7 +3,7 @@ import Settings._
 
 name := "infra"
 
-libraryDependencies ++= akka ++ akkaHttp ++ distage ++ configSupport ++ quartzScheduler
+libraryDependencies ++= akkaStream ++ akkaHttp ++ distage ++ configSupport ++ quartzScheduler ++ logger
 
 scalaVersion := versions.scala2
 crossScalaVersions := Seq(versions.scala2, versions.scala3)

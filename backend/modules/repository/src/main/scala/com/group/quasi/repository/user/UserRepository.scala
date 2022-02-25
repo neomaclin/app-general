@@ -15,9 +15,7 @@ class UserRepository(implicit override val session: SlickSession)
 
   def insert(user: User): Future[Int] = {
     session.db.run(
-      sqlu"""INSERT INTO users (id, alias, email, alias_lowercase, email_lowercase, phone, password, node_creation_epoch, active)
-                | VALUES(${user.id}, ${user.login},${user.email},${user.login},${user.login.toLowerCase},${user.email.toLowerCase}
-                | ${user.phone},  ${user.password},${user.nodeTime}, false)""",
+      sqlu"""INSERT INTO users (id, alias, email, alias_lowercase, email_lowercase, phone, password, node_creation_epoch, active) VALUES(${user.id}, ${user.login},${user.email},${user.login.toLowerCase},${user.email.toLowerCase}, ${user.phone},  ${user.password},${user.nodeTime}, false)""",
     )
   }
 

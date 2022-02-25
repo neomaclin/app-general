@@ -4,7 +4,7 @@ import com.group.quasi.domain.model.users._
 
 trait UserService[F[_]] {
 
-  def register(user: String, password: String, email: String, phone: Option[String]): F[Either[Unit, String]]
+  def register(user: String, password: String, email: String, phone: Option[String]): F[Either[Throwable, String]]
 
   def activate(key: String): F[Either[ActivationFailure, ActivationSuccess]]
 

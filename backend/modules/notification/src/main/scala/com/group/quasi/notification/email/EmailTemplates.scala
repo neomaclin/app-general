@@ -4,5 +4,5 @@ import com.group.quasi.domain.infra.notification.SubjectContent
 
 object EmailTemplates {
 
-  def activateTemplate(): SubjectContent = SubjectContent("", "")
+  def activateTemplate(title:String, content: String): SubjectContent = SubjectContent(title, content)
 }

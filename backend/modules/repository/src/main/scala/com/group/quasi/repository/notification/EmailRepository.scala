@@ -12,11 +12,17 @@ class EmailRepository(implicit override val session: SlickSession) extends Slick
   implicit private val getResult: GetResult[NotificationData] =
     GetResult(r => NotificationData(r.nextString(), r.nextString(), r.nextString()))
 
-  def insert(entry: NotificationData): Future[Int] = {
-    session.db.run(
-      sqlu"""INSERT INTO scheduled_email (recipient,subject,content) VALUES(${entry.recipient}, ${entry.subject} ,${entry.content})""",
-    )
+  class EmailNotification(tag: Tag) extends Table[NotificationData](tag, "scheduled_email") {
+    def recipient = column[String]("recipient")
+    def subject = column[String]("subject")
+    def content = column[String]("content")
+
+    def * = (recipient,subject,content) <> (NotificationData.tupled, NotificationData.unapply)
   }
+
+  private val emailNotifications = TableQuery[EmailNotification]
+
+  def insert(entry: NotificationData): Future[Int] = session.db.run( emailNotifications += entry )
 
   def findLatestBatch(): Future[Seq[NotificationData]] = {
     session.db.run(
@@ -25,10 +31,8 @@ class EmailRepository(implicit override val session: SlickSession) extends Slick
     )
   }
 
-  def removeSent(entries: Seq[NotificationData]): Future[Int] = {
-    session.db.run(
-      sqlu"""delete from scheduled_email where recipient in ${entries.map(_.recipient).mkString("(", ",", ")")}""",
-    )
+  def removeSent(entry: NotificationData): Future[Int] = {
+    session.db.run(emailNotifications.filter(_.recipient === entry.recipient).delete)
   }
 
 }

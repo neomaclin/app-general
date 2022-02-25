@@ -7,6 +7,7 @@ import com.group.quasi.domain.infra.notification.{NotificationData, Notification
 import java.util.{Date, Properties}
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Address, Message, Session, Transport}
+import scala.util.control.NonFatal
 
 /** Sends emails synchronously using SMTP.
   */
@@ -32,7 +33,9 @@ class SmtpEmailSender[F[_]: MonadThrow](config: SmtpConfig) extends Notification
         config.encoding,
         emailToSend,
       ),
-    )
+    ).recover{
+      case NonFatal(e) => println(e)
+    }
   } yield notification).recover(_ => notification)
 
 }

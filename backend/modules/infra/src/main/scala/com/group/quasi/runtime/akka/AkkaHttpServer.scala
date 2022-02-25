@@ -1,6 +1,7 @@
 package com.group.quasi.runtime.akka
 
-import akka.actor.typed.ActorSystem
+
+import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Route
@@ -15,11 +16,12 @@ import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 
 trait AkkaHttpServer {
 
+
   import cats.implicits._
 
   private val module = new MainModule[Future] ++ new ModuleDef {
 
-    make[MonadThrow[Future]].from((system: ActorSystem[Nothing]) =>
+    make[MonadThrow[Future]].from((system: ActorSystem[SpawnProtocol.Command]) =>
       catsStdInstancesForFuture(system.classicSystem.dispatcher),
     )
 
@@ -29,10 +31,11 @@ trait AkkaHttpServer {
     Injector().produceRun(module, Activation(Mode -> Mode.Prod)) {
       (
           routeProvider: AkkaApiRouteProvider,
-          akkaSystem: ActorSystem[Nothing],
+          akkaSystem: ActorSystem[SpawnProtocol.Command],
           httpConfig: HttpConfig,
           bootstrap: BootstrapService[Future],
       ) =>
+        akkaSystem
         implicit val system = akkaSystem.classicSystem
         implicit val executionContext: ExecutionContextExecutor = system.dispatcher
         Await.result(
@@ -45,4 +48,6 @@ trait AkkaHttpServer {
         )
     }
   }
+
+
 }

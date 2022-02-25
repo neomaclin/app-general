@@ -1,3 +1,6 @@
+--extensions
+CREATE EXTENSION "uuid-ossp";
+
 -- Users
 CREATE TABLE "users"
 (
@@ -64,7 +67,7 @@ CREATE TABLE "scheduled_email"
   "recipient"        TEXT NOT NULL,
   "subject"          TEXT NOT NULL,
   "content"          TEXT NOT NULL,
-  "created_on"       TIMESTAMPTZ NOT NULL,
+  "created_on"       TIMESTAMPTZ NOT NULL  default now()
 );
 ALTER TABLE "scheduled_email"
   ADD CONSTRAINT "scheduled_email_id" PRIMARY KEY ("created_on");
@@ -85,12 +88,9 @@ CREATE UNIQUE INDEX "scheduled_sms_key" ON "scheduled_sms" ("recipient");
 -- Login Attempts
 CREATE TABLE "login_attempts"
 (
-  "id"        UUID NOT NULL,
-  "request_from"   String NOT NULL,
-  "count"     INT NOT NULL,
---  "recipient" TEXT NOT NULL,
---  "subject"   TEXT NOT NULL,
---  "content"   TEXT NOT NULL
+  "id"        UUID NOT NULL default uuid_generate_v4(),
+  "request_from"   TEXT NOT NULL,
+  "count"     INT NOT NULL
 );
 ALTER TABLE "login_attempts"
   ADD CONSTRAINT "login_attempts_id" PRIMARY KEY ("id");

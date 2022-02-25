@@ -2,7 +2,6 @@ import Settings._
 import sbt.Keys._
 import sbt._
 
-
 lazy val modulesDir = file("backend") / "modules"
 
 lazy val domain = project in modulesDir / "domain"
