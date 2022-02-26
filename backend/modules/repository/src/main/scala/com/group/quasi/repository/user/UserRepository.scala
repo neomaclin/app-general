@@ -15,7 +15,7 @@ class UserRepository(implicit override val session: SlickSession)
 
   def insert(user: User): Future[Int] = {
     session.db.run(
-      sqlu"""INSERT INTO users (id, alias, email, alias_lowercase, email_lowercase, phone, password, node_creation_epoch, active) VALUES(${user.id}, ${user.login},${user.email},${user.login.toLowerCase},${user.email.toLowerCase}, ${user.phone},  ${user.password},${user.nodeTime}, false)""",
+      sqlu"""INSERT INTO users (id, alias, email, alias_lowercase, email_lowercase, phone, password, salt, node_creation_epoch, active) VALUES(${user.id}, ${user.login},${user.email},${user.login.toLowerCase},${user.email.toLowerCase}, ${user.phone},  ${user.password},  ${user.salt},${user.nodeTime}, false)""",
     )
   }
 
@@ -71,8 +71,9 @@ class UserRepository(implicit override val session: SlickSession)
     def email = column[String]("email")
     def phone = column[String]("phone")
     def password = column[String]("password")
+    def salt = column[String]("salt")
     def timeOnNode = column[Long]("node_creation_epoch")
     def active = column[Boolean]("active")
-    def * = (id, login, email, password, phone.?, timeOnNode, active) <> (User.tupled, User.unapply)
+    def * = (id, login, email, password,salt, phone.?, timeOnNode, active) <> (User.tupled, User.unapply)
   }
 }

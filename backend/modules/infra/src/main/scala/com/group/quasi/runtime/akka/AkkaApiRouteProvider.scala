@@ -20,6 +20,7 @@ import com.group.quasi.domain.service.UserService
 import exchange.api.auth._
 import io.circe.generic.auto._
 import io.circe.syntax.EncoderOps
+import org.slf4j.LoggerFactory
 import pdi.jwt.{JwtCirce, JwtClaim, JwtHeader}
 import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
 
@@ -34,6 +35,7 @@ class AkkaApiRouteProvider(
     storageConfig: StorageConfigs,
     securedUserEndpoint: UserEndpoint.SecuredUserEndpoint,
 ) {
+  private val logger = LoggerFactory.getLogger(this.getClass)
   private val interpreter: AkkaHttpServerInterpreter = AkkaHttpServerInterpreter()
 
   private def checkClaims(
@@ -187,7 +189,7 @@ class AkkaApiRouteProvider(
         UserEndpoint.register.serverLogic { request =>
           EitherT(userService.register(request.login, request.password, request.email, request.phone))
             .bimap(
-              _ => RegisterFailure("Failed to register"),
+              e => {logger.debug("",e); RegisterFailure("Failed to register")},
               RegisterResponse(_, userConfig.activationWindow.toString),
             )
             .value

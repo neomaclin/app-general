@@ -12,6 +12,7 @@ import com.group.quasi.notification.email.EmailTemplates
 import com.softwaremill.id.IdGenerator
 import com.softwaremill.id.pretty.StringIdGenerator
 import izumi.functional.mono.Clock
+import org.mindrot.jbcrypt.BCrypt
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -34,12 +35,14 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
   ): F[Either[Throwable, String]] = {
       MonadThrow[F].ifM(userRepo.findByLoginOrEmail(user, email).map( result => result.isEmpty))(
         (for {
-          userId <- idGenerator.nextId().pure[F]
-          activationKey <- keyGenerator.nextId().pure[F]
+          userId <- MonadThrow[F].pure(idGenerator.nextId())
+          activationKey <- MonadThrow[F].pure(keyGenerator.nextId())
           activationKeyValidUntil <- Clock[F].now().map(_.plus(30, ChronoUnit.MINUTES)).map(_.toInstant)
+          salt <- Applicative[F].pure(BCrypt.gensalt())
+          passwordHash <- Applicative[F].pure(BCrypt.hashpw(password,salt))
           now <- Clock[F].now().map(_.toInstant.toEpochMilli)
           _ <- userRepo.insert(
-            User(id = userId, login = user, password = password, email = email, phone = phone.filter(_.nonEmpty), nodeTime = now, active = false),
+            User(id = userId, login = user, password = passwordHash, salt = salt, email = email, phone = phone.filter(_.nonEmpty), nodeTime = now,  active = false),
           )
           _ <- activationKeyRepository.insert(activationKey, userId, activationKeyValidUntil)
           _ <- notificationService.send(NotificationDataBuilder.from(email, EmailTemplates.activateTemplate("Activation Key",activationKey)))
@@ -62,18 +65,6 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
     }).toRight(ActivationFailure(s"Failed to activate for key: $key")).value
   }
 
-//  override def deActivate(key: String): F[Either[users.ActivationFailure, users.ActivationSuccess]] = {
-//    (for {
-//      now <- OptionT.liftF(Clock[F].now().map(_.toInstant.toEpochMilli))
-//      userId <- OptionT(activationKeyRepository.findByKey(key,now))
-//      _ <- OptionT.liftF(userRepo.activate(userId))
-//      _ <- OptionT.liftF(activationKeyRepository.delete(key, userId))
-//      user <- OptionT(userRepo.findById(userId))
-//    } yield {
-//      ActivationSuccess(s"Registration for ${user.login} is now activated")
-//    }).toRight(ActivationFailure(s"Failed to activate for key: $key")).value
-//  }
-
   override def login(
       requestFrom: String,
       user: Option[String],
@@ -82,12 +73,12 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
       phoneNumber: Option[String],
   ): F[Either[users.LoginFailure, users.LoginSuccess]] = {
      OptionT(loginAttemptRepository.updateCount(requestFrom))
-      .filter(_ < users.MAX_LOGIN_ATTEMPTS)
+      .filter(_ <= users.MAX_LOGIN_ATTEMPTS)
       .foldF(Applicative[F].pure[Either[users.LoginFailure, users.LoginSuccess]](Left(users.MaxAttemptReached(requestFrom))))
       { count => (for {
-        user <- OptionT(user.map(_.trim).filter(_.nonEmpty).flatTraverse(userRepo.findByLogin))
-          .orElse(OptionT(email.map(_.trim).filter(_.nonEmpty).flatTraverse(userRepo.findByEmail)))
-          .orElse(OptionT(phoneNumber.map(_.trim).filter(_.nonEmpty).flatTraverse(userRepo.findByPhoneNumber))) if user.password === password
+        user <- OptionT(user.filter(_.trim.nonEmpty).flatTraverse(userRepo.findByLogin))
+          .orElse(OptionT(email.filter(_.trim.nonEmpty).flatTraverse(userRepo.findByEmail)))
+          .orElse(OptionT(phoneNumber.filter(_.trim.nonEmpty).flatTraverse(userRepo.findByPhoneNumber))) if BCrypt.hashpw(password, user.salt) === user.password
         _   <-  OptionT.liftF(loginAttemptRepository.resetCount(requestFrom))
       } yield {
         users.LoginSuccess(Instant.now(), users.SuccessContent(user.login, user.email, Member))

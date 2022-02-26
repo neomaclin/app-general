@@ -37,22 +37,3 @@ lazy val root = (project in file("."))
     Compile / mainClass := Some("com.group.quasi.app.WebApp"),
     scalacOptions ++= defaultScalacOptions
   )
-
-//lazy val adminBackend = (project in file("."))
-//  .aggregate(app)
-//  .dependsOn(app)
-//  .enablePlugins(JavaAppPackaging)
-//  .enablePlugins(UniversalPlugin)
-//  .settings(
-//      maintainer := "admin@quasi-g.com",
-//      organization := "com.group.quasi",
-//      organizationName := "quasi-group-inc",
-//      scalaVersion := "2.13.8",
-//      name := "app",
-//      Compile / mainClass := Some("com.group.quasi.app.AdminApp"),
-//      scalacOptions ++= defaultScalacOptions
-//  )
-//
-//lazy val root = clientBackend
-//lazy val clientBackendBuildTask = inputKey[Unit]("build yarn with arguments")
-//lazy val adminBackendBuildTask = inputKey[Unit]("build back-end for admin")

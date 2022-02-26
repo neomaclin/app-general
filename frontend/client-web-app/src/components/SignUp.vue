@@ -100,7 +100,8 @@ const onSubmit = handleSubmit(values => {
       password: values.password!,
       phone: values.phone ? values.phone! : null
     }
-    store.dispatch('register', payload, {root: true} ).then(() => router.push({ name: "Pending" }));
+    store.dispatch('register', payload, {root: true} )
+         .then(() => router.push({ name: "Pending" }));
 });
   //  const onSubmit = handleSubmit(values => {
   //     alert(JSON.stringify(values, null, 2));

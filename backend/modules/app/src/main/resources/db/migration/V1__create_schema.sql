@@ -1,4 +1,5 @@
 --extensions
+
 CREATE EXTENSION "uuid-ossp";
 
 -- Users
@@ -11,6 +12,7 @@ CREATE TABLE "users"
   "email_lowercase" TEXT        NOT NULL,
   "phone"           TEXT        NULL,
   "password"        TEXT        NOT NULL,
+    "salt"        TEXT        NOT NULL,
   "node_creation_epoch"      BIGINT      NOT Null,
   "created_on"      TIMESTAMPTZ NOT NULL default now(),
   "active"       BOOLEAN NOT NULL
@@ -72,18 +74,18 @@ CREATE TABLE "scheduled_email"
 ALTER TABLE "scheduled_email"
   ADD CONSTRAINT "scheduled_email_id" PRIMARY KEY ("created_on");
 CREATE UNIQUE INDEX "scheduled_email_key" ON "scheduled_email" ("recipient");
-
--- SMS
-CREATE TABLE "scheduled_sms"
-(
-  "recipient"       TEXT NOT NULL,
-  "subject"         TEXT NOT NULL,
-  "content"         TEXT NOT NULL,
-  "created_on"       TIMESTAMPTZ NOT NULL,
-);
-ALTER TABLE "scheduled_sms"
-  ADD CONSTRAINT "scheduled_sms_id" PRIMARY KEY ("created_on");
-CREATE UNIQUE INDEX "scheduled_sms_key" ON "scheduled_sms" ("recipient");
+--
+---- SMS
+--CREATE TABLE "scheduled_sms"
+--(
+--  "recipient"       TEXT NOT NULL,
+--  "subject"         TEXT NOT NULL,
+--  "content"         TEXT NOT NULL,
+--  "created_on"       TIMESTAMPTZ NOT NULL,
+--);
+--ALTER TABLE "scheduled_sms"
+--  ADD CONSTRAINT "scheduled_sms_id" PRIMARY KEY ("created_on");
+--CREATE UNIQUE INDEX "scheduled_sms_key" ON "scheduled_sms" ("recipient");
 
 -- Login Attempts
 CREATE TABLE "login_attempts"
@@ -95,44 +97,44 @@ CREATE TABLE "login_attempts"
 ALTER TABLE "login_attempts"
   ADD CONSTRAINT "login_attempts_id" PRIMARY KEY ("id");
 CREATE UNIQUE INDEX "login_attempts_request_from" ON "login_attempts" ("request_from");
-
--- Account Balances
-CREATE TABLE "accounts"
-(
-  "id"             BIGINT NOT NULL,
-  "user_id"        BIGINT NOT NULL,
-  "currency"       TEXT NOT NULL,
-  "amount"         TEXT NOT NULL
-  "account_number" TEXT NOT NULL,
-
-);
-ALTER TABLE "accounts"
-  ADD CONSTRAINT "accounts_id" PRIMARY KEY ("id");
-
--- Transaction Entries
-CREATE TABLE "transaction_entries"
-(
-  "from_user_id"   BIGINT NOT NULL,
-  "to_user_id"     BIGINT NOT NULL,
-  "from_account_number"   TEXT NOT NULL,
-  "to_account_number"     TEXT NOT NULL,
-  "amount"         BIGINT NOT NULL,
-  "currency"       TEXT NOT NULL,
-  "status"       TEXT NOT NULL,
-  "entered_on"     TIMESTAMPTZ NOT NULL,
-);
-ALTER TABLE "transaction_entries"
-  ADD CONSTRAINT "login_attempts_id" PRIMARY KEY ("id");
-CREATE UNIQUE INDEX "users_login_lowercase" ON "users" ("login_lowercase");
-
--- Executed orders
-CREATE TABLE "executions"
-(
-  "id"               UUID NOT NULL,
-  "order_number"     TEXT NOT NULL,
-  "executed_on"      TEXT NOT NULL,
-  "created_on"       TIMESTAMPTZ NOT NULL,
-);
-ALTER TABLE "executions"
-  ADD CONSTRAINT "executions_id" PRIMARY KEY ("id");
-CREATE UNIQUE INDEX "users_login_lowercase" ON "users" ("login_lowercase");
+--
+---- Account Balances
+--CREATE TABLE "accounts"
+--(
+--  "id"             BIGINT NOT NULL,
+--  "user_id"        BIGINT NOT NULL,
+--  "currency"       TEXT NOT NULL,
+--  "amount"         TEXT NOT NULL
+--  "account_number" TEXT NOT NULL,
+--
+--);
+--ALTER TABLE "accounts"
+--  ADD CONSTRAINT "accounts_id" PRIMARY KEY ("id");
+--
+---- Transaction Entries
+--CREATE TABLE "transaction_entries"
+--(
+--  "from_user_id"   BIGINT NOT NULL,
+--  "to_user_id"     BIGINT NOT NULL,
+--  "from_account_number"   TEXT NOT NULL,
+--  "to_account_number"     TEXT NOT NULL,
+--  "amount"         BIGINT NOT NULL,
+--  "currency"       TEXT NOT NULL,
+--  "status"       TEXT NOT NULL,
+--  "entered_on"     TIMESTAMPTZ NOT NULL,
+--);
+--ALTER TABLE "transaction_entries"
+--  ADD CONSTRAINT "login_attempts_id" PRIMARY KEY ("id");
+--CREATE UNIQUE INDEX "users_login_lowercase" ON "users" ("login_lowercase");
+--
+---- Executed orders
+--CREATE TABLE "executions"
+--(
+--  "id"               UUID NOT NULL,
+--  "order_number"     TEXT NOT NULL,
+--  "executed_on"      TEXT NOT NULL,
+--  "created_on"       TIMESTAMPTZ NOT NULL,
+--);
+--ALTER TABLE "executions"
+--  ADD CONSTRAINT "executions_id" PRIMARY KEY ("id");
+--CREATE UNIQUE INDEX "users_login_lowercase" ON "users" ("login_lowercase");

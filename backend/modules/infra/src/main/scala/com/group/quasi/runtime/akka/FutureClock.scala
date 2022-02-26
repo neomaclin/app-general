@@ -1,7 +1,7 @@
-package com.group.quasi
+package com.group.quasi.runtime.akka
 
-import cats.{Applicative, MonadThrow}
 import cats.implicits._
+import cats.{Applicative, MonadThrow}
 import izumi.functional.mono.{Clock, ClockAccuracy}
 import izumi.fundamentals.platform.time.IzTime.TZ_UTC
 

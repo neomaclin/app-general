@@ -13,7 +13,8 @@ class AuthService {
         .post('/user/login', {
           username: user.login,
           email: user.email,
-          password: user.password
+          password: user.password,
+          phone: user.phone
         })
         .then(response => {
           if (response.data.accessToken) {

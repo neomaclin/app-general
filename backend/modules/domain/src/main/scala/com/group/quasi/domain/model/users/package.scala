@@ -19,6 +19,7 @@ package object users {
       login: String,
       email: String,
       password: String,
+      salt: String,
       phone: Option[String],
       nodeTime: Long,
       active: Boolean,
@@ -37,6 +38,7 @@ package object users {
       memo: String,
   )
 
+  final case class ActivationKey(key: String, userId: Long, validUntil: Long)
   final case class ActivationFailure(msg: String)
 
   final case class ActivationSuccess(msg: String)

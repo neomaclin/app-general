@@ -25,6 +25,7 @@ class RepoMigration(config: DBConfig)(implicit override val session: SlickSessio
     Flyway
       .configure()
       .dataSource(config.url, config.username, config.password)
+      .locations("classpath:db/migration")
       .load()
   }
 

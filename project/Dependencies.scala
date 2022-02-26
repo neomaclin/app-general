@@ -116,8 +116,6 @@ object Dependencies {
 
   val loggingDependencies = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % versions.scalaLogging,
-    "ch.qos.logback" % "logback-classic" % versions.logback,
-    //   "de.siegmar" % "logback-gelf" % "4.0.2"
   )
 
   val refined = Seq(

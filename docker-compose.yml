@@ -68,6 +68,14 @@ services:
     image: 'rabbitmq:3.9'
     ports:
       - '25672:5672'
+  kurento:
+    image: kurento/kurento-media-server:6.8.0
+    ports:
+      - "8888:8888"
+#    environment:
+#      - KMS_STUN_IP=stun4.l.google.com
+#      - KMS_STUN_PORT=19302
+#      - KMS_TURN_URL=webrtc@live.com:muazkh@numb.viagenie.ca
   certbot:
     image: certbot
     container_name: certbot

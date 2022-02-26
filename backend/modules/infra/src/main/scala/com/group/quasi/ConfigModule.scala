@@ -19,8 +19,6 @@ import pureconfig.generic.auto._
 import scala.util.Try
 
 class ConfigModule extends ModuleDef {
-
-
   implicit val notificationOption: ConfigReader[NotificationOption] = ConfigReader[String].emap(catchReadError(NotificationOption.unsafe))
   implicit val notificationOptions: ConfigReader[Map[NotificationOption, NotificationConfig]] = genericMapReader[NotificationOption, NotificationConfig](catchReadError(NotificationOption.unsafe))
   implicit val storageOption: ConfigReader[StorageOption] =  ConfigReader[String].emap(catchReadError(StorageOption.unsafe))

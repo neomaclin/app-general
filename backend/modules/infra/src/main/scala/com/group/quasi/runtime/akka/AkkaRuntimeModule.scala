@@ -11,13 +11,12 @@ import exchange.api.auth.UserEndpoint
 
 import scala.concurrent.Future
 
-class AkkaRuntimeModule[F[_]: TagK] extends ModuleDef {
+class AkkaRuntimeModule extends ModuleDef {
   make[akka.actor.typed.ActorSystem[SpawnProtocol.Command]].fromResource(
     Lifecycle.makeSimple(akka.actor.typed.ActorSystem[SpawnProtocol.Command](GuardianBehavior(), "app"))(_.terminate()),
   )
   make[ActorSystem].from((_: akka.actor.typed.ActorSystem[SpawnProtocol.Command]).classicSystem)
   make[AkkaApiRouteProvider]
   make[UserEndpoint.SecuredUserEndpoint]
-  make[UserService[F]].from[UserServiceImpl[F]]
 
 }

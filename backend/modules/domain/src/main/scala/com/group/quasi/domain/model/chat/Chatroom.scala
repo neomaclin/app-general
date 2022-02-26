@@ -5,6 +5,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import com.group.quasi.domain.model.contents.Content
 
 object Chatroom {
+
   sealed trait Action
   final case class RequestToJoin(participantId: String, from: ActorRef[Participant.Activity]) extends Action
   final case class RequestToQuit(participantId: String, from: ActorRef[Participant.Activity]) extends Action

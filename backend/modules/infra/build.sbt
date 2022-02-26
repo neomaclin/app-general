@@ -4,6 +4,7 @@ import Settings._
 name := "infra"
 
 libraryDependencies ++= akkaStream ++ akkaHttp ++ distage ++ configSupport ++ quartzScheduler ++ logger
+libraryDependencies += "com.github.t3hnar" %% "scala-bcrypt" % "4.3.1"
 
 scalaVersion := versions.scala2
 crossScalaVersions := Seq(versions.scala2, versions.scala3)

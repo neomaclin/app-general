@@ -2,12 +2,12 @@ package com.group.quasi.service
 
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import cats.MonadThrow
-import com.group.quasi.FutureClock
 import com.group.quasi.domain.infra.notification.{NotificationConfigs, NotificationSender, SmtpConfig}
 import com.group.quasi.domain.service.{BootstrapService, NotificationService, UserService}
 import com.group.quasi.notification.sender.SmtpEmailSender
 import com.group.quasi.repository.RepoMigration
 import com.group.quasi.repository.notification.EmailRepository
+import com.group.quasi.runtime.akka.FutureClock
 import com.group.quasi.service.impl.{BootstrapServiceImpl, ScheduledEmailActivationNotice, UserServiceImpl}
 import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
 import distage.{ModuleDef, TagK}
@@ -17,15 +17,9 @@ import scala.concurrent.Future
 
 class ServiceModule[F[+_]: TagK] extends ModuleDef {
   make[UserService[F]].from[UserServiceImpl[F]]
-//  make[NotificationSender[F]].from( (config:NotificationConfigs, ev:MonadThrow[F]) =>
-//    config.configs.get(config.currentOption).collect{
-//      case smtp:SmtpConfig  => new  SmtpEmailSender(smtp)(ev)
-//    }.get
-//  )
   make[NotificationService[F]].from { (
                                         scheduler: QuartzSchedulerTypedExtension,
                                         emailRepository: EmailRepository,
-                                        //emailSender: SmtpEmailSender[F],
                                          config:NotificationConfigs,
                                         ev:MonadThrow[F],
                                         system: ActorSystem[SpawnProtocol.Command]
