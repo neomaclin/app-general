@@ -1,4 +1,4 @@
-package com.group.quasi.domain.persistence.repository
+package com.group.quasi.domain.persistence
 
 final case class DBConfig(
     username: String,

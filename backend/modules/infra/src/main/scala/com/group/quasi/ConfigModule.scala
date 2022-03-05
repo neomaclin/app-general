@@ -1,13 +1,13 @@
 package com.group.quasi
 
+import com.group.quasi.app.api.auth.JwtConfig
 import com.group.quasi.domain.infra.HttpConfig
 import com.group.quasi.domain.infra.notification.{NotificationConfig, NotificationConfigs, NotificationOption}
 import com.group.quasi.domain.infra.storage.{StorageConfig, StorageConfigs, StorageOption}
 import com.group.quasi.domain.model.users.UserConfig
-import com.group.quasi.domain.persistence.repository.DBConfig
+import com.group.quasi.domain.persistence.DBConfig
 import com.group.quasi.util.AsymKeys
 import distage.ModuleDef
-import exchange.api.auth.JwtConfig
 import pdi.jwt.JwtAlgorithm
 import pdi.jwt.algorithms.JwtAsymmetricAlgorithm
 import pureconfig.ConfigConvert.catchReadError

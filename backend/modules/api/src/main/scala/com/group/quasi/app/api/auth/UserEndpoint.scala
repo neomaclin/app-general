@@ -1,4 +1,4 @@
-package exchange.api.auth
+package com.group.quasi.app.api.auth
 
 import io.circe.generic.auto._
 import pdi.jwt.{JwtCirce, JwtClaim, JwtHeader}
@@ -11,7 +11,7 @@ import scala.util.Try
 
 object UserEndpoint {
 
-  private val UserPath = "user"
+  val UserPath = "user"
 
   val register: Endpoint[Unit, RegisterRequest, RegisterFailure, RegisterResponse, Any] = endpoint.post
     .in(UserPath / "register")
@@ -38,7 +38,7 @@ object UserEndpoint {
         .bearer[String]()
         .map(token => JwtCirce.decodeAll(token, jwtConfig.publicKey, Seq(jwtConfig.algo)))(_ => "")
 
-    private val securedEndpoint = endpoint
+    val securedEndpoint = endpoint
       .securityIn(jwt)
 
     val changePassword: Endpoint[Try[

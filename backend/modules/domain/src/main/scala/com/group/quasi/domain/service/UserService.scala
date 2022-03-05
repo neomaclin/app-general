@@ -16,6 +16,17 @@ trait UserService[F[_]] {
       phone: Option[String] = None,
   ): F[Either[LoginFailure, LoginSuccess]]
 
-  def updatePassword(loginAs: String, current: String, proposed: String): F[Either[Unit, Unit]]
+  def updatePassword(loginAs: String, current: String, proposed: String): F[Either[Unit, Int]]
 
+  def createOrUpdateUserProfile( user:String,
+                     lastName: String,
+                     firstName: String,
+                     alsoKnowAs: String,
+                     preferredContact: String,
+                     gender: String,
+                     snAccounts: List[String],
+                     memo: String,
+                   ):F[Either[Unit, Int]]
+
+  def getUserProfile(user:String):F[Either[Unit, UserProfile]]
 }

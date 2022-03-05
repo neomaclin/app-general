@@ -37,6 +37,7 @@ final class ScheduledEmailActivationNotice(
     .flatMapConcat(Source(_))
     .mapAsync(1)(emailSender.send)
     .mapAsync(1)(emailRepository.removeSent)
+    //.recoverWithRetries()
     .runWith(Sink.onComplete {
       case Success(value) => ()
       case Failure(e)     => ()
@@ -46,6 +47,7 @@ final class ScheduledEmailActivationNotice(
     Source
       .queue[NotificationData](512)
       .mapAsync(1)(emailRepository.insert)
+      //.recoverWithRetries()
       .to(Sink.ignore)
       .run()
 

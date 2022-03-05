@@ -12,7 +12,7 @@ CREATE TABLE "users"
   "email_lowercase" TEXT        NOT NULL,
   "phone"           TEXT        NULL,
   "password"        TEXT        NOT NULL,
-    "salt"        TEXT        NOT NULL,
+  "salt"        TEXT        NOT NULL,
   "node_creation_epoch"      BIGINT      NOT Null,
   "created_on"      TIMESTAMPTZ NOT NULL default now(),
   "active"       BOOLEAN NOT NULL
@@ -25,7 +25,7 @@ CREATE UNIQUE INDEX "users_email_lowercase" ON "users" ("email_lowercase");
 -- User profiles
 CREATE TABLE "user_profiles"
 (
-  "id"                  BIGINT        NOT NULL,
+  "id"                  UUID NOT NULL default uuid_generate_v4(),
   "user_id"             BIGINT        NOT NULL,
   "last_name"           TEXT        NOT NULL,
   "first_name"          TEXT        NOT NULL,
@@ -35,13 +35,10 @@ CREATE TABLE "user_profiles"
   "social_network_accounts"        TEXT        NOT NULL,
   "memo"        TEXT        NOT NULL,
   "created_on"      TIMESTAMPTZ NOT NULL default now(),
-  "node_creation_epoch"      BIGINT      NOT Null,
-  "updated_on"      TIMESTAMPTZ NOT NULL default now(),
-    "node_modificatin_epoch"      BIGINT      NOT Null
+  "node_modification_epoch"      BIGINT   Null
 );
-ALTER TABLE "user_profiles"
-  ADD CONSTRAINT "user_profiles_id" PRIMARY KEY ("id");
-
+ALTER TABLE "user_profiles" ADD CONSTRAINT "user_profiles_id" PRIMARY KEY ("id");
+CREATE UNIQUE INDEX "user_profiles_user_id" ON "user_profiles_id" ("user_id");
 
 -- Activation Keys
 CREATE TABLE "activation_keys"

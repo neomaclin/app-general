@@ -12,37 +12,26 @@ import akka.stream.alpakka.s3.ObjectMetadata
 import akka.stream.alpakka.s3.scaladsl.S3
 import akka.stream.scaladsl._
 import akka.util.ByteString
-import cats.data.EitherT
-import cats.implicits._
+import com.group.quasi.app.api.auth._
 import com.group.quasi.domain.infra.storage._
-import com.group.quasi.domain.model.users.{SuccessContent, UserConfig}
-import com.group.quasi.domain.service.UserService
-import exchange.api.auth._
-import io.circe.generic.auto._
-import io.circe.syntax.EncoderOps
-import org.slf4j.LoggerFactory
-import pdi.jwt.{JwtCirce, JwtClaim, JwtHeader}
+import com.group.quasi.runtime.akka.route.UserRoutes
+import pdi.jwt.JwtCirce
 import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
 
 import java.net.InetAddress
 import scala.concurrent.Future
-import scala.util.Try
 
 class AkkaApiRouteProvider(
-    userService: UserService[Future],
-    userConfig: UserConfig,
+//    userService: UserService[Future],
+//    userConfig: UserConfig,
+    userRoutes: UserRoutes,
     jwtConfig: JwtConfig,
     storageConfig: StorageConfigs,
     securedUserEndpoint: UserEndpoint.SecuredUserEndpoint,
+    interpreter: AkkaHttpServerInterpreter
 ) {
-  private val logger = LoggerFactory.getLogger(this.getClass)
-  private val interpreter: AkkaHttpServerInterpreter = AkkaHttpServerInterpreter()
 
-  private def checkClaims(
-      jwtToken: Try[(JwtHeader, JwtClaim, String)],
-  ): Future[Either[Unit, SuccessContent]] = {
-    Future.successful(jwtToken.flatMap(_._2.content.asJson.as[SuccessContent].toTry).toEither.left.map(_ => ()))
-  }
+
 
   private val fileUploadRoute = {
     post {
@@ -57,7 +46,7 @@ class AkkaApiRouteProvider(
                   val fileName = metadata.fileName
 
                   val savingFile: Future[Long] = for {
-                    userOpt <- checkClaims(jwtToken)
+                    userOpt <- userRoutes.checkClaims(jwtToken)
                     result <-
                       if (userOpt.toOption.isDefined) {
                         storageConfig.currentOption match {
@@ -107,7 +96,7 @@ class AkkaApiRouteProvider(
             extractExecutionContext { implicit ec =>
               extractMaterializer { implicit mat =>
                 val file = for {
-                  userOpt <- checkClaims(jwtToken)
+                  userOpt <- userRoutes.checkClaims(jwtToken)
                   result: HttpResponse <-
                     if (userOpt.toOption.isDefined) {
                       storageConfig.currentOption match {
@@ -161,50 +150,9 @@ class AkkaApiRouteProvider(
     }
   }
 
-  def allRoutes: Route = signupRoutes ~ fileUploadRoute ~ fileDowloadRoute ~ loginRoute
+  def allRoutes: Route =
+    userRoutes.signupRoutes ~ userRoutes.loginRoute ~ userRoutes.profileRoutes
+      fileUploadRoute ~
+      fileDowloadRoute
 
-  private val loginRoute =
-    extractExecutionContext { implicit ec =>
-      extractClientIP { address =>
-        interpreter.toRoute(
-          UserEndpoint.login.serverLogic { request: LoginRequest =>
-            EitherT(
-              userService.login(
-                address.toIP.map(_.ip.toString).getOrElse(""),
-                request.login,
-                request.password,
-                request.email,
-                request.phone,
-              ),
-            )
-              .bimap(LoginFailure.from(_, userConfig), LoginResponse.from(_, jwtConfig))
-              .value
-          },
-        )
-      }
-    }
-  private val signupRoutes = extractExecutionContext { implicit ec =>
-    interpreter.toRoute(
-      List(
-        UserEndpoint.register.serverLogic { request =>
-          EitherT(userService.register(request.login, request.password, request.email, request.phone))
-            .bimap(
-              e => {logger.debug("",e); RegisterFailure("Failed to register")},
-              RegisterResponse(_, userConfig.activationWindow.toString),
-            )
-            .value
-        },
-        UserEndpoint.activate.serverLogic { activationKey =>
-          EitherT(userService.activate(activationKey)).bimap(_.msg, _.msg).value
-        },
-        securedUserEndpoint.changePassword
-          .serverSecurityLogic { checkClaims }
-          .serverLogic { content => request =>
-            EitherT(userService.updatePassword(content.loginAs, request.current, request.proposed))
-              .bimap(_ => (), _ => PasswordResetResponse("update succeed"))
-              .value
-          },
-      ),
-    )
-  }
 }

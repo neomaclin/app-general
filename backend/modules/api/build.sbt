@@ -1,7 +1,7 @@
 import Dependencies._
 import Settings._
 
-name := "auth-api"
+name := "api"
 
 scalaVersion := versions.scala2
 crossScalaVersions := Seq(versions.scala2, versions.scala3)

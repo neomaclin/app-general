@@ -1,4 +1,4 @@
-package exchange.api
+package com.group.quasi.app.api
 
 import com.group.quasi.domain.model.users
 import com.group.quasi.domain.model.users.{LoginSuccess, UserConfig}
@@ -14,6 +14,7 @@ import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim, JwtHeader}
 import shapeless.Witness
 
 import java.security.{PrivateKey, PublicKey}
+import java.time.Instant
 
 package object auth {
 
@@ -89,4 +90,13 @@ package object auth {
       algo: JwtAsymmetricAlgorithm = JwtAlgorithm.Ed25519,
   )
 
+  final case class UserProfile(
+                                lastName: String,
+                                firstName: String,
+                                aka: String,
+                                preferredContact: String,
+                                gender: String,
+                                snAccounts: List[String],
+                                memo: String,
+                              )
 }

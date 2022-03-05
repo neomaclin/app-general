@@ -26,7 +26,6 @@ package object users {
   )
 
   final case class UserProfile(
-      id: Long,
       userId: Long,
       lastName: String,
       firstName: String,
@@ -34,7 +33,7 @@ package object users {
       preferredContact: String,
       gender: String,
       snAccounts: List[String],
-      updatedOn: Instant,
+      updatedOn: Option[Long],
       memo: String,
   )
 
@@ -49,7 +48,7 @@ package object users {
 
   final case class LoginAttemptFailure(requestFrom: String, attemptedAt: Instant, attemptCount: Int) extends LoginFailure
 
-  final case class SuccessContent(loginAs: String, email: String, role: Role)
+  final case class SuccessContent(user: String, email: String, role: Role)
 
   final case class LoginSuccess(loginAt: Instant, content: SuccessContent)
 

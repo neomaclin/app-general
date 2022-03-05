@@ -4,7 +4,7 @@ package com.group.quasi.repository
 
 import akka.actor.ActorSystem
 import akka.stream.alpakka.slick.scaladsl.SlickSession
-import com.group.quasi.domain.persistence.repository.DBConfig
+import com.group.quasi.domain.persistence.DBConfig
 import org.flywaydb.core.Flyway
 
 import scala.concurrent.{ExecutionContextExecutor, Future}

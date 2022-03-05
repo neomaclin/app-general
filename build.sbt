@@ -6,7 +6,7 @@ lazy val modulesDir = file("backend") / "modules"
 
 lazy val domain = project in modulesDir / "domain"
 
-val auth = (project in modulesDir / "api" / "auth")
+val api = (project in modulesDir / "api")
   .dependsOn(domain)
 
 lazy val repository = (project in modulesDir / "repository")
@@ -17,8 +17,8 @@ lazy val notification = (project in modulesDir / "notification")
   .enablePlugins(SbtTwirl)
 
 lazy val infra = (project in modulesDir / "infra")
-  .aggregate(domain, repository, auth, notification)
-  .dependsOn(domain, auth, repository, notification)
+  .aggregate(domain, api, repository, notification)
+  .dependsOn(domain, api, repository, notification)
 
 lazy val app = (project in modulesDir / "app")
   .dependsOn(infra)

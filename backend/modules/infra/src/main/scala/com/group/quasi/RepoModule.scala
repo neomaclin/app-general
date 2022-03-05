@@ -1,11 +1,10 @@
 package com.group.quasi
 
 import akka.stream.alpakka.slick.scaladsl.SlickSession
-import com.group.quasi.domain.persistence.operation
-import com.group.quasi.domain.persistence.repository.DBConfig
+import com.group.quasi.domain.persistence.{DBConfig, operation}
 import com.group.quasi.repository.RepoMigration
 import com.group.quasi.repository.notification.EmailRepository
-import com.group.quasi.repository.user.{ActivationKeyRepository, UserProfileRepository, UserRepository, LoginAttemptRepository}
+import com.group.quasi.repository.user.{ActivationKeyRepository, LoginAttemptRepository, UserProfileRepository, UserRepository}
 import distage.ModuleDef
 
 import scala.concurrent.Future

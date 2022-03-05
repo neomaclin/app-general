@@ -2,7 +2,7 @@ package com.group.quasi.service
 
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import cats.MonadThrow
-import com.group.quasi.domain.infra.notification.{NotificationConfigs, NotificationSender, SmtpConfig}
+import com.group.quasi.domain.infra.notification.{NotificationConfigs, SmtpConfig}
 import com.group.quasi.domain.service.{BootstrapService, NotificationService, UserService}
 import com.group.quasi.notification.sender.SmtpEmailSender
 import com.group.quasi.repository.RepoMigration
@@ -17,23 +17,31 @@ import scala.concurrent.Future
 
 class ServiceModule[F[+_]: TagK] extends ModuleDef {
   make[UserService[F]].from[UserServiceImpl[F]]
-  make[NotificationService[F]].from { (
-                                        scheduler: QuartzSchedulerTypedExtension,
-                                        emailRepository: EmailRepository,
-                                         config:NotificationConfigs,
-                                        ev:MonadThrow[F],
-                                        system: ActorSystem[SpawnProtocol.Command]
-                                      ) =>
-    val service = if (TagK[Future].hasPreciseClass) {
-      val emailSender = config.configs.get(config.currentOption).collect{
-        case smtp:SmtpConfig  => new  SmtpEmailSender(smtp)(ev)
-      }.get
-      new ScheduledEmailActivationNotice(scheduler, emailRepository, emailSender.asInstanceOf[SmtpEmailSender[Future]])(system)
-    } else {
-      throw new RuntimeException("only support future")
-    }
-    system.classicSystem.registerOnTermination(service.close())
-    service.asInstanceOf[NotificationService[F]]
+  make[NotificationService[F]].from {
+    (
+        scheduler: QuartzSchedulerTypedExtension,
+        emailRepository: EmailRepository,
+        config: NotificationConfigs,
+        ev: MonadThrow[F],
+        system: ActorSystem[SpawnProtocol.Command],
+    ) =>
+      val service = if (TagK[Future].hasPreciseClass) {
+        val emailSender = config.configs
+          .get(config.currentOption)
+          .collect { case smtp: SmtpConfig =>
+            new SmtpEmailSender(smtp)(ev)
+          }
+          .get
+        new ScheduledEmailActivationNotice(
+          scheduler,
+          emailRepository,
+          emailSender.asInstanceOf[SmtpEmailSender[Future]],
+        )(system)
+      } else {
+        throw new RuntimeException("only support future")
+      }
+      system.classicSystem.registerOnTermination(service.close())
+      service.asInstanceOf[NotificationService[F]]
   }
   make[ScheduledEmailActivationNotice]
   make[BootstrapService[F]].from { (migration: RepoMigration) =>
@@ -44,7 +52,9 @@ class ServiceModule[F[+_]: TagK] extends ModuleDef {
     }
     service.asInstanceOf[BootstrapService[F]]
   }
-  make[QuartzSchedulerTypedExtension].from((  system: ActorSystem[SpawnProtocol.Command]) => new QuartzSchedulerTypedExtension(system) )
+  make[QuartzSchedulerTypedExtension].from((system: ActorSystem[SpawnProtocol.Command]) =>
+    new QuartzSchedulerTypedExtension(system),
+  )
   make[Clock[F]].from[FutureClock[F]]
 
 }
