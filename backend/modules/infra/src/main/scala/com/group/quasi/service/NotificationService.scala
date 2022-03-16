@@ -1,7 +1,7 @@
-package com.group.quasi.domain.service
+package com.group.quasi.service
 
 import com.group.quasi.domain.infra.notification.NotificationData
-import com.group.quasi.domain.service.NotificationService.NotificationResult
+import com.group.quasi.service.NotificationService.NotificationResult
 
 trait NotificationService[F[_]] {
   def send(data: NotificationData): F[NotificationResult]

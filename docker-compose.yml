@@ -8,8 +8,8 @@ services:
       - '8080:8080'
     depends_on:
       - db
-      - smtp
-      - mq
+#       - smtp
+#      - mq
     environment:
       DATABASE_URL: "jdbc:postgresql://db/app"
       SQL_USERNAME: 'postgres'
@@ -27,18 +27,10 @@ services:
       SMTP_FROM: "admin@quasi-g.com"
       NOTIFICATION_BATCH_SIZE: 10
       NOTIFICATION_SEND_INTERVAL: "1 second"
-      MQ_HOST: mq
-      MQ_PORT: 5672
+    #  MQ_HOST: mq
+    #  MQ_PORT: 5672
       API_HOST: '0.0.0.0'
       API_PORT: 8080
-#  proxy:
-#    image: 'nginx'
-#    ports:
-#      - '80:80'
-#      - '443:443'
-#   volumes:
-#      - conf/etc/nginx
-#      - conf/etc/ssl/private
   proxy:
     image: 'nginx'
     restart: unless-stopped
@@ -50,6 +42,8 @@ services:
       - ./conf/nginx.conf:/etc/nginx/conf.d
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - app
     networks:
       - app-network
   db:
@@ -60,14 +54,14 @@ services:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'admin'
       POSTGRES_DB: 'app'
-  smtp:
-    image: 'namshi/smtp'
-    ports:
-      - '2587:587'
-  mq:
-    image: 'rabbitmq:3.9'
-    ports:
-      - '25672:5672'
+#  smtp:
+#    image: 'namshi/smtp'
+#    ports:
+#      - '2587:587'
+#  mq:
+#    image: 'rabbitmq:3.9'
+#    ports:
+#      - '25672:5672'
   kurento:
     image: kurento/kurento-media-server:6.8.0
     ports:
@@ -83,8 +77,8 @@ services:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - web-root:/var/www/html
-#    depends_on:
-#      - proxy
+    depends_on:
+      - proxy
     command: certonly --webroot --webroot-path=/var/www/html --email admin@quasi-g.com --agree-tos --no-eff-email --staging -d general-app.com  -d www.general-app.com
 
 volumes:

@@ -14,9 +14,9 @@ class RepoModule extends ModuleDef {
     SlickSession.forConfig("persistence." + config.profile)
   }
   make[operation.UserRepository[Future]].from[UserRepository]
+  make[operation.UserProfileRepository[Future]].from[UserProfileRepository]
   make[operation.LoginAttemptRepository[Future]].from[LoginAttemptRepository]
   make[operation.ActivationKeyRepository[Future]].from[ActivationKeyRepository]
   make[EmailRepository]
-  make[UserProfileRepository]
   make[RepoMigration]
 }

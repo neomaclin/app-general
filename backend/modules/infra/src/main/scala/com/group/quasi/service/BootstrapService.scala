@@ -1,4 +1,4 @@
-package com.group.quasi.domain.service
+package com.group.quasi.service
 
 trait BootstrapService[F[_]] {
   def initialize(): F[Unit]

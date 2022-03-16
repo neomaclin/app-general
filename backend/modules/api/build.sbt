@@ -17,6 +17,6 @@ scalafmtAll := {
   (Test / scalafmt).value
 }
 
-libraryDependencies ++= tapir ++ circe ++ refined ++ jwt
+libraryDependencies ++= tapir ++ circe ++ jwt
 
 scalacOptions ++= defaultScalacOptions

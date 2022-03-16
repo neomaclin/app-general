@@ -5,7 +5,7 @@ object Dependencies {
     val scala2 = "2.13.8"
     val scala3 = "3.1.0"
     val akka = "2.6.18"
-    val akkaHttp = "10.2.7"
+    val akkaHttp = "10.2.9"
     val cats = "2.7.0"
     val distage = "1.0.10"
     val tapir = "0.19.3"
@@ -13,14 +13,14 @@ object Dependencies {
     val doobie = "1.0.0-RC1"
     val configSupport = "0.17.1"
     val bytebuddy = "1.12.8"
-    val scalaTest = "3.2.10"
+    val scalaTest = "3.2.11"
     val scalaMock = "5.2.0"
     val mockito = "1.17.0"
     val scalaLogging = "3.9.4"
     val logback = "1.2.10"
     val refined = "0.9.28"
     val alpakka = "3.0.4"
-    val jwt = "9.0.3"
+    val jwt = "9.0.4"
     val log4j = "2.17.1"
   }
 
@@ -97,7 +97,7 @@ object Dependencies {
   )
 
   val phoneDependencies = Seq(
-    "com.googlecode.libphonenumber" % "libphonenumber" % "8.12.42",
+    "com.googlecode.libphonenumber" % "libphonenumber" % "8.12.44",
   )
 
   val scalaTest = Seq(

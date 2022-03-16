@@ -1,4 +1,4 @@
-package com.group.quasi.app.api
+package com.group.quasi.api
 
 import com.group.quasi.domain.model.contents.Content
 

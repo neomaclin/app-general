@@ -5,16 +5,16 @@ import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.typed.scaladsl.ActorSource
 import akka.stream.{CompletionStrategy, OverflowStrategy, QueueOfferResult}
 import com.group.quasi.domain.infra.notification.NotificationData
-import com.group.quasi.domain.service.NotificationService
-import com.group.quasi.domain.service.NotificationService._
 import com.group.quasi.notification.sender.SmtpEmailSender
 import com.group.quasi.repository.notification.EmailRepository
+import com.group.quasi.service.NotificationService
+import com.group.quasi.service.NotificationService._
 import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-final class ScheduledEmailActivationNotice(
+final class ScheduledEmailActivationNoticeServiceImpl(
     scheduler: QuartzSchedulerTypedExtension,
     emailRepository: EmailRepository,
     emailSender: SmtpEmailSender[Future],

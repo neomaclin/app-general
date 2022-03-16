@@ -6,6 +6,7 @@ import java.time.Instant
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 package object users {
+
   val MAX_LOGIN_ATTEMPTS = 5
   val MAX_ACTIVATION_WINDOW: FiniteDuration = 3.hours
 
@@ -13,6 +14,7 @@ package object users {
       loginMaxAttempts: Int = MAX_LOGIN_ATTEMPTS,
       activationWindow: FiniteDuration = MAX_ACTIVATION_WINDOW,
   )
+
 
   final case class User(
       id: Long,

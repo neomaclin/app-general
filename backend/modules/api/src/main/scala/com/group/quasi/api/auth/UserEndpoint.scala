@@ -1,12 +1,13 @@
-package com.group.quasi.app.api.auth
+package com.group.quasi.api.auth
 
 import io.circe.generic.auto._
 import pdi.jwt.{JwtCirce, JwtClaim, JwtHeader}
 import sttp.model.StatusCode
+import io.circe.refined._
 import sttp.tapir._
 import sttp.tapir.generic.auto._
-import sttp.tapir.json.circe._
-
+import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.codec.refined._
 import scala.util.Try
 
 object UserEndpoint {

@@ -2,18 +2,14 @@ package com.group.quasi.runtime.akka.route
 
 import akka.http.scaladsl.server.Directives.{extractClientIP, extractExecutionContext}
 import cats.data.EitherT
-import com.group.quasi.app.api.auth.UserProfileEndpoint.UserProfileExt
-import com.group.quasi.app.api.auth._
-import com.group.quasi.domain.model.users.{SuccessContent, UserConfig}
+import com.group.quasi.api.auth.UserProfileEndpoint.UserProfileExt
+import com.group.quasi.api.auth._
+import com.group.quasi.domain.model.users.UserConfig
 import com.group.quasi.domain.service.UserService
-import io.circe.generic.auto._
-import io.circe.syntax.EncoderOps
 import org.slf4j.LoggerFactory
-import pdi.jwt.{JwtClaim, JwtHeader}
 import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
 
 import scala.concurrent.Future
-import scala.util.Try
 
 class UserRoutes(
     userService: UserService[Future],
@@ -23,11 +19,6 @@ class UserRoutes(
     securedUserEndpoint: UserEndpoint.SecuredUserEndpoint,
 ) {
   private val logger = LoggerFactory.getLogger(this.getClass)
-  def checkClaims(
-      jwtToken: Try[(JwtHeader, JwtClaim, String)],
-  ): Future[Either[Unit, SuccessContent]] = {
-    Future.successful(jwtToken.flatMap(_._2.content.asJson.as[SuccessContent].toTry).toEither.left.map(_ => ()))
-  }
 
   val loginRoute =
     extractExecutionContext { implicit ec =>
@@ -37,10 +28,10 @@ class UserRoutes(
             EitherT(
               userService.login(
                 address.toIP.map(_.ip.toString).getOrElse(""),
-                request.login,
-                request.password,
-                request.email,
-                request.phone,
+                request.login.map(_.value),
+                request.password.value,
+                request.email.map(_.value),
+                request.phone.map(_.value),
               ),
             )
               .bimap(LoginFailure.from(_, userConfig), LoginResponse.from(_, jwtConfig))
@@ -53,7 +44,7 @@ class UserRoutes(
     interpreter.toRoute(
       List(
         UserEndpoint.register.serverLogic { request =>
-          EitherT(userService.register(request.login, request.password, request.email, request.phone))
+          EitherT(userService.register(request.login.value, request.password.value, request.email.value, request.phone.map(_.value)))
             .bimap(
               e => { logger.debug("", e); RegisterFailure("Failed to register") },
               RegisterResponse(_, userConfig.activationWindow.toString),

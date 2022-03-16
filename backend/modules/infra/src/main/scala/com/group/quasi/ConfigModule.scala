@@ -1,6 +1,6 @@
 package com.group.quasi
 
-import com.group.quasi.app.api.auth.JwtConfig
+import com.group.quasi.api.auth.JwtConfig
 import com.group.quasi.domain.infra.HttpConfig
 import com.group.quasi.domain.infra.notification.{NotificationConfig, NotificationConfigs, NotificationOption}
 import com.group.quasi.domain.infra.storage.{StorageConfig, StorageConfigs, StorageOption}

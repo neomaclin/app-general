@@ -1,39 +1,29 @@
-package com.group.quasi.runtime.akka
+package com.group.quasi.runtime.akka.route
 
 import akka.NotUsed
 import akka.http.scaladsl.model.HttpEntity.Chunked
 import akka.http.scaladsl.model.headers.Authorization
 import akka.http.scaladsl.model.{ContentType, HttpResponse, MediaTypes}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
 import akka.stream.alpakka.ftp.scaladsl.Ftp
 import akka.stream.alpakka.ftp.{FtpCredentials, FtpSettings}
 import akka.stream.alpakka.s3.ObjectMetadata
 import akka.stream.alpakka.s3.scaladsl.S3
-import akka.stream.scaladsl._
+import akka.stream.scaladsl.{FileIO, Flow, Sink}
 import akka.util.ByteString
-import com.group.quasi.app.api.auth._
+import com.group.quasi.api.auth.JwtConfig
 import com.group.quasi.domain.infra.storage._
-import com.group.quasi.runtime.akka.route.UserRoutes
 import pdi.jwt.JwtCirce
-import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
 
 import java.net.InetAddress
 import scala.concurrent.Future
 
-class AkkaApiRouteProvider(
-//    userService: UserService[Future],
-//    userConfig: UserConfig,
-    userRoutes: UserRoutes,
+class FileRoutes(
     jwtConfig: JwtConfig,
     storageConfig: StorageConfigs,
-    securedUserEndpoint: UserEndpoint.SecuredUserEndpoint,
-    interpreter: AkkaHttpServerInterpreter
 ) {
 
-
-
-  private val fileUploadRoute = {
+  val fileUploadRoute = {
     post {
       path("user" / "file" / "upload") {
         headerValueByType(Authorization) { authrization =>
@@ -46,7 +36,7 @@ class AkkaApiRouteProvider(
                   val fileName = metadata.fileName
 
                   val savingFile: Future[Long] = for {
-                    userOpt <- userRoutes.checkClaims(jwtToken)
+                    userOpt <- checkClaims(jwtToken)
                     result <-
                       if (userOpt.toOption.isDefined) {
                         storageConfig.currentOption match {
@@ -86,7 +76,7 @@ class AkkaApiRouteProvider(
     }
   }
 
-  private val fileDowloadRoute = {
+  val fileDownloadRoute = {
     get {
       path("user" / "file" / "download" / Remaining) { fileName =>
         headerValueByType(Authorization) { authrization =>
@@ -96,7 +86,7 @@ class AkkaApiRouteProvider(
             extractExecutionContext { implicit ec =>
               extractMaterializer { implicit mat =>
                 val file = for {
-                  userOpt <- userRoutes.checkClaims(jwtToken)
+                  userOpt <- checkClaims(jwtToken)
                   result: HttpResponse <-
                     if (userOpt.toOption.isDefined) {
                       storageConfig.currentOption match {
@@ -149,10 +139,5 @@ class AkkaApiRouteProvider(
 
     }
   }
-
-  def allRoutes: Route =
-    userRoutes.signupRoutes ~ userRoutes.loginRoute ~ userRoutes.profileRoutes
-      fileUploadRoute ~
-      fileDowloadRoute
 
 }

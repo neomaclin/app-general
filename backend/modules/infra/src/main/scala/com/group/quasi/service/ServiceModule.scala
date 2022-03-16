@@ -3,12 +3,12 @@ package com.group.quasi.service
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import cats.MonadThrow
 import com.group.quasi.domain.infra.notification.{NotificationConfigs, SmtpConfig}
-import com.group.quasi.domain.service.{BootstrapService, NotificationService, UserService}
+import com.group.quasi.domain.service.UserService
 import com.group.quasi.notification.sender.SmtpEmailSender
 import com.group.quasi.repository.RepoMigration
 import com.group.quasi.repository.notification.EmailRepository
 import com.group.quasi.runtime.akka.FutureClock
-import com.group.quasi.service.impl.{BootstrapServiceImpl, ScheduledEmailActivationNotice, UserServiceImpl}
+import com.group.quasi.service.impl.{BootstrapServiceImpl, ScheduledEmailActivationNoticeServiceImpl, UserServiceImpl}
 import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
 import distage.{ModuleDef, TagK}
 import izumi.functional.mono.Clock
@@ -32,7 +32,7 @@ class ServiceModule[F[+_]: TagK] extends ModuleDef {
             new SmtpEmailSender(smtp)(ev)
           }
           .get
-        new ScheduledEmailActivationNotice(
+        new ScheduledEmailActivationNoticeServiceImpl(
           scheduler,
           emailRepository,
           emailSender.asInstanceOf[SmtpEmailSender[Future]],
@@ -43,7 +43,7 @@ class ServiceModule[F[+_]: TagK] extends ModuleDef {
       system.classicSystem.registerOnTermination(service.close())
       service.asInstanceOf[NotificationService[F]]
   }
-  make[ScheduledEmailActivationNotice]
+  make[ScheduledEmailActivationNoticeServiceImpl]
   make[BootstrapService[F]].from { (migration: RepoMigration) =>
     val service = if (TagK[Future].hasPreciseClass) {
       new BootstrapServiceImpl(migration)

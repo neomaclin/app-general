@@ -1,7 +1,7 @@
 package com.group.quasi.service.impl
 
-import com.group.quasi.domain.service.BootstrapService
 import com.group.quasi.repository.RepoMigration
+import com.group.quasi.service.BootstrapService
 
 import scala.concurrent.Future
 

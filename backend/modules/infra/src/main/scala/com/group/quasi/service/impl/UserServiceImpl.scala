@@ -7,8 +7,9 @@ import com.group.quasi.domain.model.roles.Member
 import com.group.quasi.domain.model.users
 import com.group.quasi.domain.model.users.{ActivationFailure, ActivationSuccess, User, UserProfile}
 import com.group.quasi.domain.persistence.operation.{ActivationKeyRepository, LoginAttemptRepository, UserProfileRepository, UserRepository}
-import com.group.quasi.domain.service.{NotificationService, UserService}
+import com.group.quasi.domain.service.UserService
 import com.group.quasi.notification.email.EmailTemplates
+import com.group.quasi.service.NotificationService
 import com.softwaremill.id.IdGenerator
 import com.softwaremill.id.pretty.StringIdGenerator
 import izumi.functional.mono.Clock
