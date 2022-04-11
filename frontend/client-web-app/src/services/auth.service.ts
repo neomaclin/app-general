@@ -1,10 +1,10 @@
-import { AxiosStatic } from "axios";
+import { AxiosInstance } from "axios";
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "../types/auth.module";
 
 class AuthService {
-   private axios: AxiosStatic
+   private axios: AxiosInstance
    
-   constructor(axios: AxiosStatic) {
+   constructor(axios: AxiosInstance) {
         this.axios = axios
    }
 

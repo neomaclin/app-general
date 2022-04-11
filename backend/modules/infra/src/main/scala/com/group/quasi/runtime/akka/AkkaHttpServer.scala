@@ -1,14 +1,15 @@
 package com.group.quasi.runtime.akka
 
 
+import akka.actor
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Route
-import cats.MonadThrow
 import com.group.quasi.MainModule
 import com.group.quasi.domain.infra.HttpConfig
-import com.group.quasi.domain.service.BootstrapService
+import com.group.quasi.runtime.akka.route.AkkaApiRouteProvider
+import com.group.quasi.service.BootstrapService
 import distage._
 
 import scala.concurrent.duration.{Duration, DurationInt}
@@ -16,27 +17,15 @@ import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 
 trait AkkaHttpServer {
 
-
-  import cats.implicits._
-
-  private val module = new MainModule[Future] ++ new ModuleDef {
-
-    make[MonadThrow[Future]].from((system: ActorSystem[SpawnProtocol.Command]) =>
-      catsStdInstancesForFuture(system.classicSystem.dispatcher),
-    )
-
-  }
-
   def run: ServerBinding = {
-    Injector().produceRun(module, Activation(Mode -> Mode.Prod)) {
+    Injector().produceRun(new MainModule[Future] , Activation(Mode -> Mode.Prod)) {
       (
           routeProvider: AkkaApiRouteProvider,
           akkaSystem: ActorSystem[SpawnProtocol.Command],
           httpConfig: HttpConfig,
           bootstrap: BootstrapService[Future],
       ) =>
-        akkaSystem
-        implicit val system = akkaSystem.classicSystem
+        implicit val system: actor.ActorSystem = akkaSystem.classicSystem
         implicit val executionContext: ExecutionContextExecutor = system.dispatcher
         Await.result(
           for {

@@ -7,7 +7,7 @@ import About from '../views/About.vue'
 import Pending from '../views/Pending.vue'
 //import Activation from '../views/Activation.vue'
 import NotFound from '../views/NotFound.vue'
-//
+
 import SignUp from "../components/SignUp.vue"
 import Login from "../components/Login.vue"
 
