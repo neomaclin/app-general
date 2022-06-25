@@ -65,6 +65,20 @@ object Dependencies {
     "org.typelevel" %% "cats-kernel",
   ).map(_ % versions.cats)
 
+  val kitten = Seq(
+    "org.typelevel" %% "kittens" % "2.3.2"
+  )
+
+  val catsMTL = Seq(
+    "org.typelevel" %% "cats-mtl" % "1.2.1"
+  )
+
+
+  val catsEffect2 = Seq(
+    "org.typelevel" %% "cats-effect" % "2.5.4"
+  )
+
+
   val distage = Seq(
     "io.7mind.izumi" %% "distage-core" % versions.distage,
   )

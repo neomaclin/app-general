@@ -2,7 +2,6 @@ package com.group.quasi.api
 
 import com.group.quasi.domain.model.users
 import com.group.quasi.domain.model.users.{LoginSuccess, UserConfig}
-import eu.timepit.refined.W
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.boolean.And
 import eu.timepit.refined.collection.{MaxSize, MinSize}
@@ -28,9 +27,9 @@ package object auth {
   type Regex = email.T
 
   type RefinedEmail = Email Refined MatchesRegex[Regex]
-  type RefinedAlias = LoginAlias Refined And[MinSize[W.`5`.T], MaxSize[W.`25`.T]]
-  type RefinedPhone = Phone Refined And[MinSize[W.`8`.T], MaxSize[W.`18`.T]]
-  type RefinedPassword = Password Refined And[MinSize[W.`8`.T], MaxSize[W.`25`.T]]
+  type RefinedAlias = LoginAlias Refined And[MinSize[5], MaxSize[25]]
+  type RefinedPhone = Phone Refined And[MinSize[8], MaxSize[18]]
+  type RefinedPassword = Password Refined And[MinSize[8], MaxSize[25]]
 
   final case class RegisterRequest(
       login: RefinedAlias,

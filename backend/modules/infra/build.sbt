@@ -3,7 +3,7 @@ import Settings._
 
 name := "infra"
 
-libraryDependencies ++= akkaStream ++ akkaHttp ++ distage ++ configSupport ++ quartzScheduler ++ logger
+libraryDependencies ++= akkaStream ++ akkaHttp ++ distage ++ configSupport ++ quartzScheduler ++ logger ++ catsEffect2
 libraryDependencies += "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
 
 scalaVersion := versions.scala2
