@@ -1,6 +1,6 @@
 package com.group.quasi.domain.persistence.operation
 
-import com.group.quasi.domain.model.contents.messages.{Message, MessageBatch}
+
 import com.group.quasi.domain.model.users.UserId
 
 
@@ -10,7 +10,7 @@ trait ChatRoomRepository[F[_]] {
 
   def loadBy(userId:UserId): F[List[String]]
 
-  def append(userId:UserId, message: Message): F[List[String]]
+  def updateRoomName(oldRoomId:String, newRoomId: String, byUser:UserId): F[Unit]
 
-  def loadTailFrom(roomId:String, size:Int): F[MessageBatch]
+
 }
