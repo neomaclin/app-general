@@ -57,7 +57,7 @@ class UserRoutes(
         securedUserEndpoint.changePassword
           .serverSecurityLogic { checkClaims }
           .serverLogic { content => request =>
-            EitherT(userService.updatePassword(content.user, request.current, request.proposed))
+            EitherT(userService.updatePassword(content.user, request.current.value, request.proposed.value))
               .bimap(_ => (), _ => PasswordResetResponse("update succeed"))
               .value
           },

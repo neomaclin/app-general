@@ -1,3 +1,3 @@
-package com.group.quasi.domain.infra
+package com.group.quasi.domain.config
 
 final case class HttpConfig(host: String, port: Int)

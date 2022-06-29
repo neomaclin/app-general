@@ -1,6 +1,6 @@
 package com.group.quasi.notification.email
 
-import com.group.quasi.domain.infra.notification.SubjectContent
+import com.group.quasi.domain.config.notification.SubjectContent
 
 object EmailTemplates {
 

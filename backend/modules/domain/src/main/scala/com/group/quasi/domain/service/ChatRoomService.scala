@@ -1,7 +1,5 @@
 package com.group.quasi.domain.service
 
-import java.time.Instant
-
 trait ChatRoomService[F[_]] {
 
   def init(byUserLogin:String):F[String]

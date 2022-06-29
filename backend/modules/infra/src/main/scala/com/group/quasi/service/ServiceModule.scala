@@ -2,7 +2,7 @@ package com.group.quasi.service
 
 import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import cats.MonadThrow
-import com.group.quasi.domain.infra.notification.{NotificationConfigs, SmtpConfig}
+import com.group.quasi.domain.config.notification.{NotificationConfigs, SmtpConfig}
 import com.group.quasi.domain.service.UserService
 import com.group.quasi.notification.sender.SmtpEmailSender
 import com.group.quasi.repository.RepoMigration

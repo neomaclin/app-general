@@ -2,7 +2,7 @@ package com.group.quasi.notification.sender
 
 import cats.MonadThrow
 import cats.implicits._
-import com.group.quasi.domain.infra.notification.{NotificationData, NotificationSender, SmtpConfig}
+import com.group.quasi.domain.config.notification.{NotificationData, NotificationSender, SmtpConfig}
 
 import java.util.{Date, Properties}
 import javax.mail.internet.{InternetAddress, MimeMessage}
