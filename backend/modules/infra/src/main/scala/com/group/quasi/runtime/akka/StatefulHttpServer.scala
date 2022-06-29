@@ -15,7 +15,7 @@ import distage._
 import scala.concurrent.duration.{Duration, DurationInt}
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 
-trait AkkaHttpServer {
+trait StatefulHttpServer {
 
   def run: ServerBinding = {
     Injector().produceRun(new MainModule[Future] , Activation(Mode -> Mode.Prod)) {
