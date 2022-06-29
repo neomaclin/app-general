@@ -42,5 +42,5 @@ object FriendZoneEndpoint {
 //      .errorOut(statusCode(StatusCode.Locked))
 
 
-  }
+  //}
 }

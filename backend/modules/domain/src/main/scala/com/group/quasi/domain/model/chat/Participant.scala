@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import com.group.quasi.domain.model.contents.Content
 
 object Participant {
- sealed trait Activity
+  sealed trait Activity
   final case class ExitedFrom(roomId:String) extends Activity
   final case class Joined(roomId:String) extends Activity
   final case class Receive(content: Content) extends Activity

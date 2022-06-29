@@ -1,4 +1,4 @@
-package com.group.quasi.domain.infra
+package com.group.quasi.domain.config
 
 package object queue {
   sealed trait MessageBusOption

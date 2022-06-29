@@ -12,7 +12,7 @@ import akka.stream.alpakka.s3.scaladsl.S3
 import akka.stream.scaladsl.{FileIO, Flow, Sink}
 import akka.util.ByteString
 import com.group.quasi.api.auth.JwtConfig
-import com.group.quasi.domain.infra.storage._
+import com.group.quasi.domain.config.storage._
 import pdi.jwt.JwtCirce
 
 import java.net.InetAddress

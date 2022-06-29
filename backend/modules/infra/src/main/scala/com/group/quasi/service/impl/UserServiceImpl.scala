@@ -1,8 +1,8 @@
 package com.group.quasi.service.impl
 
+import cats.MonadThrow
 import cats.data.OptionT
-import cats.{Applicative, MonadThrow}
-import com.group.quasi.domain.infra.notification.NotificationDataBuilder
+import com.group.quasi.domain.config.notification.NotificationDataBuilder
 import com.group.quasi.domain.model.roles.Member
 import com.group.quasi.domain.model.users
 import com.group.quasi.domain.model.users.{ActivationFailure, ActivationSuccess, User, UserProfile}
@@ -14,6 +14,7 @@ import com.softwaremill.id.IdGenerator
 import com.softwaremill.id.pretty.StringIdGenerator
 import izumi.functional.mono.Clock
 import org.mindrot.jbcrypt.BCrypt
+import eu.timepit.refined.auto._
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -35,13 +36,13 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
       email: String,
       phone: Option[String],
   ): F[Either[Throwable, String]] = {
-    MonadThrow[F].ifM(userRepo.findByLoginOrEmail(user, email).map(result => result.isEmpty))(
+    MonadThrow[F].ifM(userRepo.findByLoginOrEmail(user, email).map(_.isEmpty))(
       (for {
-        userId <- MonadThrow[F].pure(idGenerator.nextId())
-        activationKey <- MonadThrow[F].pure(keyGenerator.nextId())
+        userId <- idGenerator.nextId().pure[F]
+        activationKey <- keyGenerator.nextId().pure[F]
         activationKeyValidUntil <- Clock[F].now().map(_.plus(30, ChronoUnit.MINUTES)).map(_.toInstant)
-        salt <- Applicative[F].pure(BCrypt.gensalt())
-        passwordHash <- Applicative[F].pure(BCrypt.hashpw(password, salt))
+        salt <- BCrypt.gensalt().pure[F]
+        passwordHash <- BCrypt.hashpw(password, salt).pure[F]
         now <- Clock[F].now().map(_.toInstant.toEpochMilli)
         _ <- userRepo.insert(
           User(
@@ -59,20 +60,18 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
         _ <- notificationService.send(
           NotificationDataBuilder.from(email, EmailTemplates.activateTemplate("Activation Key", activationKey)),
         )
-      } yield Right(activationKey): Either[Throwable, String]).recover { case NonFatal(e) =>
-        Left(e)
-      },
-      Applicative[F].pure[Either[Throwable, String]](Left(new RuntimeException("User already existed."))),
+      } yield Right(activationKey).withLeft[Throwable]).recover { case NonFatal(e) => Left(e).withRight[String]},
+      Left(new RuntimeException("User already existed.")).withRight[String].leftWiden[Throwable].pure[F]
     )
   }
 
   override def activate(key: String): F[Either[users.ActivationFailure, users.ActivationSuccess]] = {
     (for {
       now <- OptionT.liftF(Clock[F].now().map(_.toInstant.toEpochMilli))
-      userId <- OptionT(activationKeyRepository.findByKey(key, now))
+      userId <- OptionT.apply(activationKeyRepository.findByKey(key, now))
       _ <- OptionT.liftF(userRepo.activate(userId))
       _ <- OptionT.liftF(activationKeyRepository.delete(key, userId))
-      user <- OptionT(userRepo.findById(userId))
+      user <- OptionT.apply(userRepo.findById(userId))
     } yield {
       ActivationSuccess(s"Registration for ${user.login} is now activated")
     }).toRight(ActivationFailure(s"Failed to activate for key: $key")).value
@@ -88,7 +87,7 @@ class UserServiceImpl[F[_]: MonadThrow: Clock](
     OptionT(loginAttemptRepository.updateCount(requestFrom))
       .filter(_ <= users.MAX_LOGIN_ATTEMPTS)
       .foldF(
-        Applicative[F].pure[Either[users.LoginFailure, users.LoginSuccess]](Left(users.MaxAttemptReached(requestFrom))),
+        Left(users.MaxAttemptReached(requestFrom)).withRight[users.LoginSuccess].leftWiden[users.LoginFailure].pure[F],
       ) { count =>
         (for {
           user <- OptionT(user.filter(_.trim.nonEmpty).flatTraverse(userRepo.findByLogin))

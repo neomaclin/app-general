@@ -5,28 +5,33 @@ import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext}
 import akka.actor.typed.{ActorRef, Behavior}
 import com.group.quasi.domain.model.contents.Content
 import com.group.quasi.domain.model.contents.messages.Message
-import com.group.quasi.domain.persistence.operation.ChatRoomRepository
+import com.group.quasi.domain.model.users.UserId
+import com.group.quasi.domain.persistence.operation.{ChatRoomRepository, MessageRepository}
 
 import java.time.Instant
 import java.util.UUID
 import scala.collection.mutable
 import scala.concurrent.Future
 
+
 object Chatroom {
 
   sealed trait Action
 
-  final case class RequestToJoin(fromId: String, from: ActorRef[Participant.Activity]) extends Action
+  final case class RequestToJoin(fromId: UserId, from: ActorRef[Participant.Activity]) extends Action
 
-  final case class RequestToQuit(fromId: String) extends Action
+  final case class RequestToQuit(fromId: UserId) extends Action
 
   final case class UpdateRoomName(newName: String) extends Action
 
-  final case class AssignHost(newHostId: String, newHost:ActorRef[Participant.Activity]) extends Action
+  sealed trait RepoResponseResult
+  private final case class WrappedUpdateResult(result: RepoResponseResult, replyTo: ActorRef[Participant.Activity]) extends Action
 
-  final case class RequestToRemove(participantId: String, byId: String) extends Action
+  final case class AssignHost(newHostId: UserId, newHost:ActorRef[Participant.Activity]) extends Action
 
-  final case class ContentToRoom(content: Content, participantId: String, from: ActorRef[Participant.Activity]) extends Action
+  final case class RequestToRemove(participantId: UserId, byId: UserId) extends Action
+
+  final case class ContentToRoom(content: Content, participantId: UserId, from: ActorRef[Participant.Activity]) extends Action
 
 
 }
@@ -34,22 +39,26 @@ object Chatroom {
 class Chatroom(context: ActorContext[Chatroom.Action],
                roomId: String,
                roomName: String,
-               host: (String, ActorRef[Participant.Activity]),
+               host: (UserId, ActorRef[Participant.Activity]),
                lastMessage: Option[Message],
-               chatroom:ChatRoomRepository[Future]
-             //  messag:
+               chatroomRepository :ChatRoomRepository[Future],
+               messageRepository: MessageRepository[Future]
               ) extends AbstractBehavior[Chatroom.Action](context) {
   import Chatroom._
   private val _roomId = roomId
   private var _roomName = roomName
   private var _host = host
-  private val participants: mutable.Map[String, ActorRef[Participant.Activity]] =  mutable.Map.apply(host)
+  private val participants: mutable.Map[UserId, ActorRef[Participant.Activity]] =  mutable.Map.apply(host)
   private var _lastMessage: Option[Message] = lastMessage
   context.system.receptionist ! Receptionist.Register(ServiceKey[Action]("ChatroomKey"+roomId), context.self)
 
   override def onMessage(msg: Action): Behavior[Action] = {
     msg match {
           case UpdateRoomName(newName) =>
+//            context.pipeToSelf(chatroomRepository.updateRoomName(this._roomName, newName, host._1)){
+//              case Success(_) =>
+//
+//            }
             this._roomName = newName
             this
           case AssignHost(id,ref) =>
@@ -68,6 +77,10 @@ class Chatroom(context: ActorContext[Chatroom.Action],
           case ContentToRoom(content, fromId, from) =>
             participants.filterNot(_._1==fromId).values.foreach(_ ! Participant.Receive(content))
             _lastMessage = Some(Message( UUID.randomUUID(), fromId, content, Instant.now()))
+//            context.pipeToSelf(messageRepository.persist(_roomId, fromId, _lastMessage.get)){
+//              case Success(_) => WrappedUpdateResult(UpdateSuccess(value.id), replyTo)
+//              case Failure(e) => WrappedUpdateResult(UpdateFailure(value.id, e.getMessage), replyTo)
+//            }
             this
     }
   }

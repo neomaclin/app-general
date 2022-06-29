@@ -1,6 +1,6 @@
 package com.group.quasi.service
 
-import com.group.quasi.domain.infra.notification.NotificationData
+import com.group.quasi.domain.config.notification.NotificationData
 import com.group.quasi.service.NotificationService.NotificationResult
 
 trait NotificationService[F[_]] {

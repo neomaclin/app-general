@@ -1,7 +1,7 @@
 package com.group.quasi.repository.notification
 
 import akka.stream.alpakka.slick.scaladsl.SlickSession
-import com.group.quasi.domain.infra.notification.NotificationData
+import com.group.quasi.domain.config.notification.NotificationData
 import com.group.quasi.repository.{PostgresProfile, SlickRepository}
 
 import scala.concurrent.Future

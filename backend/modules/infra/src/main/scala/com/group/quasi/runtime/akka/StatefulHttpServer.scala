@@ -7,7 +7,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Route
 import com.group.quasi.MainModule
-import com.group.quasi.domain.infra.HttpConfig
+import com.group.quasi.domain.config.HttpConfig
 import com.group.quasi.runtime.akka.route.AkkaApiRouteProvider
 import com.group.quasi.service.BootstrapService
 import distage._

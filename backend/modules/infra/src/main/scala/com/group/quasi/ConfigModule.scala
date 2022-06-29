@@ -1,15 +1,17 @@
 package com.group.quasi
 
 import com.group.quasi.api.auth.JwtConfig
-import com.group.quasi.domain.infra.HttpConfig
-import com.group.quasi.domain.infra.notification.{NotificationConfig, NotificationConfigs, NotificationOption}
-import com.group.quasi.domain.infra.storage.{StorageConfig, StorageConfigs, StorageOption}
+import com.group.quasi.domain.config.HttpConfig
+import com.group.quasi.domain.config.notification.{NotificationConfig, NotificationConfigs, NotificationOption}
+import com.group.quasi.domain.config.storage.{StorageConfig, StorageConfigs, StorageOption}
 import com.group.quasi.domain.model.users.UserConfig
 import com.group.quasi.domain.persistence.DBConfig
 import com.group.quasi.util.AsymKeys
 import distage.ModuleDef
 import pdi.jwt.JwtAlgorithm
 import pdi.jwt.algorithms.JwtAsymmetricAlgorithm
+
+
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig._
 import pureconfig.configurable._
@@ -25,7 +27,7 @@ class ConfigModule extends ModuleDef {
   implicit val StorageOptions: ConfigReader[Map[StorageOption, StorageConfig]] = genericMapReader[StorageOption, StorageConfig](catchReadError(StorageOption.unsafe))
 
   implicit val jwtConfig: ConfigReader[JwtConfig] = ConfigReader.fromCursor[JwtConfig] { cur =>
-    for{
+    for { 
       algo <- cur.fluent.at("algo").asString.flatMap(
         str => JwtAlgorithm.optionFromString(str)
           .filter(_.isInstanceOf[JwtAsymmetricAlgorithm])
@@ -38,9 +40,8 @@ class ConfigModule extends ModuleDef {
       privateKey <- cur.fluent.at("private-key").asString.flatMap(
         str => Try{AsymKeys.fromAlgo(algo.fullName).privateKeyFromBase64String(str)}.toEither.left.map[ConfigReaderFailures](e=>ConfigReaderFailures(cur.failureFor(ExceptionThrown(e))))
       )
-    } yield {
-      JwtConfig(publicKey = publicKey, privateKey = privateKey, algo = algo)
-    }
+    } yield JwtConfig(publicKey = publicKey, privateKey = privateKey, algo = algo)
+    
 
   }
   make[ConfigObjectSource].fromValue(ConfigSource.default)

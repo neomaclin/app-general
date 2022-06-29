@@ -10,7 +10,6 @@ import io.circe.syntax._
 import io.circe.generic.auto._
 import pdi.jwt.algorithms.JwtAsymmetricAlgorithm
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim, JwtHeader}
-import shapeless.Witness
 
 import java.security.{PrivateKey, PublicKey}
 
@@ -20,13 +19,8 @@ package object auth {
   type Email = String
   type Phone = String
   type Password = String
-  val email =
-    Witness(
-      """^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""",
-    )
-  type Regex = email.T
-
-  type RefinedEmail = Email Refined MatchesRegex[Regex]
+  type Token = String
+  type RefinedEmail = Email Refined MatchesRegex["""^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""]
   type RefinedAlias = LoginAlias Refined And[MinSize[5], MaxSize[25]]
   type RefinedPhone = Phone Refined And[MinSize[8], MaxSize[18]]
   type RefinedPassword = Password Refined And[MinSize[8], MaxSize[25]]
@@ -54,7 +48,7 @@ package object auth {
       phone: Option[RefinedPhone],
   )
 
-  final case class LoginResponse(accessToken: String)
+  final case class LoginResponse(accessToken: Token)
 
   object LoginResponse {
     def from(success: LoginSuccess, jwtConfig: JwtConfig): LoginResponse = {
@@ -80,7 +74,7 @@ package object auth {
     }
   }
 
-  final case class PasswordResetRequest(current: Password, proposed: Password)
+  final case class PasswordResetRequest(current: RefinedPassword, proposed: RefinedPassword)
 
   final case class PasswordResetResponse(msg: String)
 
