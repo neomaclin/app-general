@@ -2,7 +2,6 @@ package com.group.quasi.api
 
 import com.group.quasi.domain.model.users
 import com.group.quasi.domain.model.users.{LoginSuccess, UserConfig}
-
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.boolean.And
 import eu.timepit.refined.collection.{MaxSize, MinSize}

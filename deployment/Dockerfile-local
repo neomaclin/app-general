@@ -2,7 +2,7 @@
 FROM hseeberger/scala-sbt:17.0.1_1.6.1_2.13.8 as builder1
 ARG ARTIFACT_NAME="app"
 WORKDIR /build
-COPY . ./
+COPY .. ./
 RUN sbt clean scalafmtAll "Test / test"
 RUN sbt clean "Universal / packageBin"
 RUN unzip /build/target/universal/$ARTIFACT_NAME-*.zip -d /build/unpack && mv /build/unpack/*/* /build/unpack && rm -rf /build/unpack/$ARTIFACT_NAME-*
@@ -15,12 +15,12 @@ RUN yum install -y nodejs
 RUN npm install --global yarn
 WORKDIR /app
 
-COPY . ./
+COPY .. ./
 
 COPY --from=builder1 /build/unpack/. /app
 
 RUN mkdir -p /shared
-COPY start-backend.sh /app/
+COPY ../start-backend.sh /app/
 #COPY start-frontend.sh /build/
 
 #ENTRYPOINT ["bash","/app/shart-backend.sh && /app/shart-frontend.sh"]

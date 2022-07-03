@@ -3,7 +3,7 @@ import Settings._
 
 name := "domain"
 
-libraryDependencies ++= cats ++ akka ++ refined
+libraryDependencies ++= cats ++ akka ++ refined ++ catsMTL ++ kitten
 
 scalaVersion := versions.scala2
 //crossScalaVersions := Seq(versions.scala2, versions.scala3)
