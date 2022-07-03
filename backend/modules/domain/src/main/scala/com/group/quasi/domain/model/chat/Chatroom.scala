@@ -54,6 +54,8 @@ class Chatroom(context: ActorContext[Chatroom.Action],
 
   override def onMessage(msg: Action): Behavior[Action] = {
     msg match {
+          case WrappedUpdateResult(result, replyTo) =>
+            this
           case UpdateRoomName(newName) =>
 //            context.pipeToSelf(chatroomRepository.updateRoomName(this._roomName, newName, host._1)){
 //              case Success(_) =>

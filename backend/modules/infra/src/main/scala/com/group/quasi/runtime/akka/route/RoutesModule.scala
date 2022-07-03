@@ -9,5 +9,7 @@ class RoutesModule  extends ModuleDef {
   make[UserRoutes]
   make[FileRoutes]
   make[ChatRoomRoutes]
+  make[HeartbeatRoutes]
+  make[UserEndpoint.SecuredUserEndpoint]
   make[UserEndpoint.SecuredUserEndpoint]
 }

@@ -21,6 +21,7 @@ object AsymKeys{
 trait AsymKeys {
 
   def publicKeyFromBytes(bytes: Array[Byte]): PublicKey
+
   def privateKeyFromBytes(bytes: Array[Byte]): PrivateKey
 
   def publicKeyFromBase64String(base64String: String): PublicKey = publicKeyFromBytes(bytesFromString(base64String))

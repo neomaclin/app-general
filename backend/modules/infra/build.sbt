@@ -7,7 +7,7 @@ libraryDependencies ++= akkaStream ++ akkaHttp ++ distage ++ configSupport ++ qu
 libraryDependencies += "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
 
 scalaVersion := versions.scala2
-crossScalaVersions := Seq(versions.scala2, versions.scala3)
+//crossScalaVersions := Seq(versions.scala2, versions.scala3)
 scalafmtCheckAll := {
   (Compile / scalafmtSbtCheck).value
   (Compile / scalafmtCheck).value

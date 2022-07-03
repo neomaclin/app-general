@@ -8,7 +8,7 @@ object Dependencies {
     val akkaHttp = "10.2.9"
     val cats = "2.7.0"
     val distage = "1.0.10"
-    val tapir = "0.19.3"
+    val tapir = "0.20.2"
     val circe = "0.14.1"
     val configSupport = "0.17.1"
     val bytebuddy = "1.12.10"
@@ -53,9 +53,9 @@ object Dependencies {
     "com.softwaremill.sttp.tapir" %% "tapir-json-circe",
     "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server",
     "com.softwaremill.sttp.tapir" %% "tapir-sttp-client",
-    "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs",
-    "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe",
-    "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml",
+    "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs",
+    "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe",
+    "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml",
     "com.softwaremill.sttp.tapir" %% "tapir-refined"
   ).map(_ % versions.tapir)
 
